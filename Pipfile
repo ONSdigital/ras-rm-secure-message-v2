@@ -9,6 +9,8 @@ flask-restful = "*"
 structlog = "*"
 
 [dev-packages]
+black = "*"
+isort = "*"
 
 [requires]
 python_version = "3.11"

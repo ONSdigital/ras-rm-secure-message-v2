@@ -1,4 +1,5 @@
 import logging
+
 from flask import Flask
 from flask_restful import Api
 from structlog import wrap_logger
