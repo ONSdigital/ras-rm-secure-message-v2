@@ -8,6 +8,7 @@ from secure_message_v2.resources.info import Info
 
 logger = wrap_logger(logging.getLogger(__name__))
 
+
 def create_app(config=None):
     app = Flask(__name__)
     app.name = "ras-rm-secure-message-v2"
