@@ -1,10 +1,9 @@
 import logging
 
 from flask import Flask
-from flask_restful import Api
 from structlog import wrap_logger
 
-from secure_message_v2.resources.info import Info
+from secure_message_v2.views.info import info_bp
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -15,7 +14,6 @@ def create_app(config=None):
     app_config = f"config.{config}"
     app.config.from_object(app_config)
 
-    api = Api(app)
-    api.add_resource(Info, "/info")
+    app.register_blueprint(info_bp, url_prefix="/info")
 
     return app
