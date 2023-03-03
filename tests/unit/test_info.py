@@ -12,4 +12,4 @@ class TestInfo(unittest.TestCase):
         response = self.app.get("/info")
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn('"name": "ras-rm-secure-message-v2"'.encode(), response.data)
+        self.assertIn('"name": "ras-rm-secure-message-v2"'.encode(), response.data)  # noqa: E501

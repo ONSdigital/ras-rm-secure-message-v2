@@ -10,6 +10,8 @@ structlog = "*"
 [dev-packages]
 black = "*"
 isort = "*"
+pytest = "*"
+flake8 = "*"
 
 [requires]
 python_version = "3.11"
