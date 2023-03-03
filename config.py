@@ -6,3 +6,7 @@ class Config:
     """
 
     VERSION = "0.0.1"
+
+
+class TestConfig(Config):
+    "Put test-specific config here"
