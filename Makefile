@@ -15,3 +15,6 @@ lint-check:
 	pipenv run isort --check-only .
 	pipenv run black --line-length 120 .
 	pipenv run flake8
+
+unit-test:
+	pipenv run pytest
