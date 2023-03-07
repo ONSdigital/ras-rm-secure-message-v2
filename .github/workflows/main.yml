@@ -12,7 +12,7 @@ env:
   IMAGE: secure-message-v2
   REGISTRY_HOSTNAME: eu.gcr.io
   HOST: ${{ secrets.GOOGLE_PROJECT_ID }}
-  CHART_DIRECTORY: _infra/helm/secure-message
+  CHART_DIRECTORY: _infra/helm/secure-message-v2
   SPINNAKER_TOPIC: ${{ secrets.SPINNAKER_TOPIC }}
   ARTIFACT_BUCKET: ${{ secrets.ARTIFACT_BUCKET }}
 
