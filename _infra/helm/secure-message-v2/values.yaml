@@ -1,0 +1,63 @@
+env: minikube
+namespace: minikube
+
+image:
+  devRepo: eu.gcr.io/ons-rasrmbs-management
+  name: eu.gcr.io/ons-rasrmbs-management
+  tag: latest
+  pullPolicy: Always
+
+database:
+  managedPostgres: false
+  sqlProxyEnabled: false
+  secrets:
+    usernameKey: username
+    passwordKey: password
+    nameKey: db-name
+
+container:
+  port: 8080
+service:
+  port: 8080
+
+resources:
+  application:
+    requests:
+      memory: "300Mi"
+      cpu: "150m"
+    limits:
+      memory: "375Mi"
+      cpu: "300m"
+  proxy:
+    requests:
+      memory: "64Mi"
+      cpu: "30m"
+    limits:
+      memory: "128Mi"
+      cpu: "100m"
+
+autoscaling: false
+scaleAt:
+  # These are expressed as a percentage of resources.requests, not resources.limits
+  memoryPercentage: 150
+  cpuPercentage: 200
+replicas: 1
+maxReplicas: 1
+rollingUpdate:
+  maxSurge: 1
+  maxUnavailable: 1
+
+email:
+  enabled: "0"
+  frontstageHost: "localhost:8082"
+  frontstageProtocol: "http"
+  templates:
+    notification: "insert-uuid-here"
+
+gcp:
+  project: ras-rm-sandbox
+  topic: ras-rm-notify-test
+
+dns:
+  enabled: false
+  wellKnownPort: 8080
