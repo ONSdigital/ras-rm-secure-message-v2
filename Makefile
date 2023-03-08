@@ -21,9 +21,10 @@ lint-check:
 unit-test:
 	pipenv run pytest
 
-test: lint-check
-	pipenv run behave --format progress
-	pipenv run pytest
+# behavioural tests not implemented yet
+# test: lint-check
+# 	pipenv run behave --format progress
+# 	pipenv run pytest
 
 build-docker:
 	docker build .
