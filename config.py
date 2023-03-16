@@ -6,8 +6,8 @@ class Config:
     the appropriate environment variable name.
     """
 
-    VERSION = "0.0.1"
-
 
 class TestConfig(Config):
-    "Put test-specific config here"
+    """
+    Put test-specific config here
+    """
