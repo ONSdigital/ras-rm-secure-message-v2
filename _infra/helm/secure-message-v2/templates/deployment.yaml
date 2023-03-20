@@ -122,16 +122,6 @@ spec:
               secretKeyRef:
                 name: db-credentials
                 key: {{ .Values.database.secrets.passwordKey }}
-          - name: SECURITY_USER_NAME
-            valueFrom:
-              secretKeyRef:
-                name: security-credentials
-                key: security-user
-          - name: SECURITY_USER_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: security-credentials
-                key: security-password
           - name: PORT
             value: "{{ .Values.container.port }}"
           - name: DATABASE_URL
@@ -140,48 +130,13 @@ spec:
             {{- else }}
             value: "postgresql://$(DB_USERNAME):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)"
             {{- end }}
-          - name: SM_JWT_ENCRYPT
-            value: "0"
-          - name: JWT_SECRET
-            valueFrom:
-              secretKeyRef:
-                name: jwt-secret
-                key: jwt-secret
-          - name: NOTIFICATION_TEMPLATE_ID
-            value: "{{ .Values.email.templates.notification }}"
-          - name: NOTIFY_VIA_GOV_NOTIFY
-            value: "{{ .Values.email.enabled }}"
           - name: GOOGLE_CLOUD_PROJECT
             value: "{{ .Values.gcp.project }}"
           - name: GOOGLE_APPLICATION_CREDENTIALS
             value: /var/secrets/google/credentials.json
-          - name: PUBSUB_TOPIC
-            value: "{{ .Values.gcp.topic }}"
-          - name: FRONTSTAGE_URL
-            value: "{{ .Values.email.frontstageProtocol}}://{{ .Values.email.frontstageHost }}"
-          - name: PARTY_URL
-            {{- if .Values.dns.enabled }}
-            value: "http://party.{{ .Values.namespace }}.svc.cluster.local:{{ .Values.dns.wellKnownPort }}"
-            {{- else }}
-            value: "http://$(PARTY_SERVICE_HOST):$(PARTY_SERVICE_PORT)"
-            {{- end }}
-          - name: USE_UAA
-            value: "1"
-          - name: UAA_URL
-            {{- if .Values.dns.enabled }}
             value: "http://uaa.{{ .Values.namespace }}.svc.cluster.local:{{ .Values.dns.wellKnownPort }}"
             {{- else }}
             value: "http://$(UAA_SERVICE_HOST):$(UAA_SERVICE_PORT)"
             {{- end }}
-          - name: CLIENT_ID
-            valueFrom:
-              secretKeyRef:
-                name: secure-message-v2
-                key: client-id
-          - name: CLIENT_SECRET
-            valueFrom:
-              secretKeyRef:
-                name: secure-message-v2
-                key: client-secret
           resources:
             {{ toYaml .Values.resources.application | nindent 12 }}

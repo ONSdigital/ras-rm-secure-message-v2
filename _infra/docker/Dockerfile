@@ -9,6 +9,6 @@ WORKDIR /app
 COPY . /app
 RUN pipenv install --deploy --system
 
-EXPOSE 80
+EXPOSE 5051
 CMD ["gunicorn", "-c", "gunicorn.py", "app:app"]
 
