@@ -1,7 +1,7 @@
 #!flask/bin/python
 import os
 
-from application import create_app
+from secure_message_v2.application import create_app
 
 DEV_PORT = os.getenv("DEV_PORT", 5051)
 app = create_app("Config")
