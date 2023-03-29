@@ -1,6 +1,6 @@
 import unittest
 
-from application import create_app
+from secure_message_v2.application import create_app
 
 
 class TestInfo(unittest.TestCase):
