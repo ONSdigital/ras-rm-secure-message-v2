@@ -23,15 +23,6 @@ spec:
         - name: google-cloud-key
           secret:
             secretName: google-application-credentials
-        {{- if .Values.database.sqlProxyEnabled }}
-        - name: cloudsql-instance-credentials
-          secret:
-            secretName: cloudsql-proxy-credentials
-            defaultMode: 0444
-            items:
-            - key: "credentials.json"
-              path: "credentials.json"
-        {{- end }}
       containers:
         - name: {{ .Chart.Name }}
            {{- if eq .Values.image.tag "latest"}}
