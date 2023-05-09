@@ -33,34 +33,6 @@ spec:
               path: "credentials.json"
         {{- end }}
       containers:
-        {{- if .Values.database.sqlProxyEnabled }}
-        - name: cloudsql-proxy
-          image: gcr.io/cloudsql-docker/gce-proxy:1.32.0
-          command: ["/cloud_sql_proxy",
-                    "-instances=$(SQL_INSTANCE_NAME)=tcp:$(DB_PORT)",
-                    "-ip_address_types=PRIVATE",
-                    "-credential_file=/secrets/cloudsql/credentials.json"]
-          securityContext:
-            runAsUser: 2  # non-root user
-            allowPrivilegeEscalation: false
-          volumeMounts:
-            - name: cloudsql-instance-credentials
-              mountPath: /secrets/cloudsql
-              readOnly: true
-          env:
-          - name: SQL_INSTANCE_NAME
-            valueFrom:
-              configMapKeyRef:
-                name: cloudsql-proxy-config
-                key: instance-connection-name
-          - name: DB_PORT
-            valueFrom:
-              secretKeyRef:
-                name: db-config
-                key: db-port
-          resources:
-            {{ toYaml .Values.resources.proxy | nindent 12 }}
-        {{- end }}
         - name: {{ .Chart.Name }}
            {{- if eq .Values.image.tag "latest"}}
           image: "{{ .Values.image.name }}/{{ .Chart.Name }}:{{ .Chart.AppVersion }}"
@@ -93,43 +65,8 @@ spec:
             successThreshold: 1
             timeoutSeconds: 5
           env:
-          - name: DB_HOST
-            {{- if .Values.database.managedPostgres }}
-            valueFrom:
-              secretKeyRef:
-                name: db-config
-                key: db-host
-            {{- else }}
-            value: $(POSTGRES_SERVICE_HOST)
-            {{- end }}
-          - name: DB_PORT
-            valueFrom:
-              secretKeyRef:
-                name: db-config
-                key: db-port
-          - name: DB_NAME
-            valueFrom:
-              secretKeyRef:
-                name: db-config
-                key: {{ .Values.database.secrets.nameKey }}
-          - name: DB_USERNAME
-            valueFrom:
-              secretKeyRef:
-                name: db-credentials
-                key: {{ .Values.database.secrets.usernameKey }}
-          - name: DB_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: db-credentials
-                key: {{ .Values.database.secrets.passwordKey }}
           - name: PORT
             value: "{{ .Values.container.port }}"
-          - name: DATABASE_URL
-            {{- if .Values.database.sqlProxyEnabled }}
-            value: "postgresql://$(DB_USERNAME):$(DB_PASSWORD)@127.0.0.1:$(DB_PORT)/$(DB_NAME)"
-            {{- else }}
-            value: "postgresql://$(DB_USERNAME):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)"
-            {{- end }}
           - name: GOOGLE_APPLICATION_CREDENTIALS
             value: /var/secrets/google/credentials.json
           resources:
