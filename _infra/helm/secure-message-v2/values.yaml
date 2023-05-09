@@ -7,14 +7,6 @@ image:
   tag: latest
   pullPolicy: Always
 
-database:
-  managedPostgres: false
-  sqlProxyEnabled: false
-  secrets:
-    usernameKey: username
-    passwordKey: password
-    nameKey: db-name
-
 container:
   port: 8080
 service:
