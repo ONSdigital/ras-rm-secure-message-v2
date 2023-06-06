@@ -8,6 +8,8 @@ flask = "*"
 structlog = "*"
 gunicorn = "*"
 sqlalchemy = "*"
+retrying = "*"
+psycopg2-binary = "*"
 
 [dev-packages]
 black = "*"

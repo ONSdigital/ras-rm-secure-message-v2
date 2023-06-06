@@ -1,7 +1,8 @@
 from typing import List, Optional
-from sqlalchemy import DateTime, ForeignKey
+from sqlalchemy import ForeignKey
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
-from sqlalchemy.dialects.postgresql import UUID
+from uuid import UUID
+from datetime import datetime
 
 
 class Base(DeclarativeBase):
@@ -16,7 +17,7 @@ class Thread(Base):
     category: Mapped[str]
     is_closed: Mapped[Optional[bool]]
     closed_by_id: Mapped[Optional[UUID]]
-    closed_at: Mapped[Optional[DateTime]]
+    closed_at: Mapped[Optional[datetime]]
     case_id: Mapped[Optional[UUID]]
     ru_ref: Mapped[Optional[str]]
     survey_id: Mapped[Optional[UUID]]
@@ -34,7 +35,7 @@ class Message(Base):
     id: Mapped[UUID] = mapped_column(primary_key=True)
     thread_id: Mapped[UUID] = mapped_column(ForeignKey("thread.id"))
     body: Mapped[str]
-    sent_at: Mapped[Optional[DateTime]]
+    sent_at: Mapped[Optional[datetime]]
     is_from_internal: Mapped[bool]
     sent_by: Mapped[UUID]
 

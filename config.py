@@ -13,7 +13,7 @@ class Config:
     HOST = os.getenv("HOST", "0.0.0.0")
     PORT = os.getenv("PORT", 5051)
 
-    DATABASE_SCHEMA = os.getenv("DATABASE_SCHEMA", "securemessage")
+    DATABASE_SCHEMA = os.getenv("DATABASE_SCHEMA", "securemessages")
     DATABASE_URI = os.getenv("DATABASE_URI", "postgresql://postgres:postgres@localhost:5432/postgres")
 
 
