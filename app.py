@@ -1,8 +1,8 @@
 import logging
 from json import loads
 
-from structlog import wrap_logger
 from retrying import RetryError
+from structlog import wrap_logger
 
 from run import create_app, initialise_db
 
