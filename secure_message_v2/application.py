@@ -2,12 +2,12 @@ import logging
 import os
 
 from flask import Flask
-from structlog import wrap_logger
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
+from structlog import wrap_logger
 
-from secure_message_v2.views.info import info_bp
 from secure_message_v2.models import models
+from secure_message_v2.views.info import info_bp
 
 logger = wrap_logger(logging.getLogger(__name__))
 

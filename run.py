@@ -1,8 +1,9 @@
 import logging
 
-from structlog import wrap_logger
 from retrying import RetryError, retry
 from sqlalchemy.exc import DatabaseError, ProgrammingError
+from structlog import wrap_logger
+
 from secure_message_v2.application import create_app, create_database
 
 logger = wrap_logger(logging.getLogger(__name__))
