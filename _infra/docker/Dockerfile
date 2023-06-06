@@ -10,5 +10,5 @@ COPY . /app
 RUN pipenv install --deploy --system
 
 EXPOSE 5051
-CMD ["gunicorn", "-c", "gunicorn.py", "main:app"]
+CMD ["gunicorn", "-c", "gunicorn.py", "app:app"]
 
