@@ -8,8 +8,6 @@ from secure_message_v2.application import create_app, create_database
 
 logger = wrap_logger(logging.getLogger(__name__))
 
-app = Flask(__name__)
-
 
 def retry_if_database_error(exception):
     logger.error("Database error has occured", error=exception)

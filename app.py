@@ -1,5 +1,4 @@
 import logging
-from json import loads
 
 from retrying import RetryError
 from structlog import wrap_logger
