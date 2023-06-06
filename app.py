@@ -3,7 +3,8 @@ import logging
 from retrying import RetryError
 from structlog import wrap_logger
 
-from run import create_app, initialise_db
+from run import initialise_db
+from application import create_app
 
 """
 This is a duplicate of run.py, with minor modifications to support gunicorn execution
@@ -11,7 +12,7 @@ This is a duplicate of run.py, with minor modifications to support gunicorn exec
 
 logger = wrap_logger(logging.getLogger(__name__))
 
-app = create_app()
+app = create_app("Config")
 
 logger.debug("Created Flask app.")
 
