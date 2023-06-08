@@ -29,9 +29,12 @@ def create_database(db_connection, db_schema):
 
     @event.listens_for(engine, "connect", insert=True)
     def set_default_schema(dbapi_connection, connection_record):
+        existing_autocommit = dbapi_connection.autocommit
+        dbapi_connection.autocommit = True
         cursor = dbapi_connection.cursor()
-        cursor.execute("ALTER SESSION SET CURRENT_SCHEMA=%s" % db_schema)
+        cursor.execute("SET SESSION search_path='%s'" % db_schema)
         cursor.close()
+        dbapi_connection.autocommit = existing_autocommit
 
     session = scoped_session(sessionmaker())
     session.configure(bind=engine, autoflush=False, expire_on_commit=False)
