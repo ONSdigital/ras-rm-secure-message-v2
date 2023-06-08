@@ -10,8 +10,6 @@ from secure_message_v2.models import models
 from secure_message_v2.views.info import info_bp
 
 logger = wrap_logger(logging.getLogger(__name__))
-engine = None
-schema = "public"
 
 
 def create_app(config=None):
@@ -27,8 +25,14 @@ def create_app(config=None):
 
 
 def create_database(db_connection, db_schema):
-    schema = db_schema
     engine = create_engine(db_connection)
+
+    @event.listens_for(engine, "connect", insert=True)
+    def set_default_schema(dbapi_connection, connection_record):
+        cursor = dbapi_connection.cursor()
+        cursor.execute("ALTER SESSION SET CURRENT_SCHEMA=%s" % db_schema)
+        cursor.close()
+
     session = scoped_session(sessionmaker())
     session.configure(bind=engine, autoflush=False, expire_on_commit=False)
     engine.session = session
@@ -40,8 +44,3 @@ def create_database(db_connection, db_schema):
 
     return engine
 
-@event.listens_for(engine, "connect", insert=True)
-def set_default_schema(dbapi_connection, connection_record):
-    cursor = dbapi_connection.cursor()
-    cursor.execute("ALTER SESSION SET CURRENT_SCHEMA=%s" % schema)
-    cursor.close()
