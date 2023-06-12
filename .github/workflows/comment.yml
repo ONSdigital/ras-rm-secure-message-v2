@@ -5,7 +5,7 @@ on:
     types: [created]
 
 env:
-  SERVICE: secure-message
+  SERVICE: secure-message-v2
 
 jobs:
   comment:
