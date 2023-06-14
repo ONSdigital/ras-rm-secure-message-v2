@@ -2,7 +2,7 @@ import logging
 import os
 
 from flask import Flask
-from sqlalchemy import create_engine, event
+from sqlalchemy import DDL, create_engine, event
 from sqlalchemy.orm import scoped_session, sessionmaker
 from structlog import wrap_logger
 
@@ -43,7 +43,7 @@ def create_database(db_connection, db_schema):
 
     logger.info("Creating database connection")
 
+    event.listen(models.Base.metadata, "before_create", DDL(f"CREATE SCHEMA IF NOT EXISTS {db_schema}"))
     models.Base.metadata.create_all(engine)
 
     return engine
-
