@@ -8,6 +8,7 @@ from structlog import wrap_logger
 
 from secure_message_v2.models import models
 from secure_message_v2.views.info import info_bp
+from secure_message_v2.views.messages import messages_bp
 
 logger = wrap_logger(logging.getLogger(__name__))
 
@@ -20,6 +21,7 @@ def create_app(config=None):
     app.config.from_object(app_config)
 
     app.register_blueprint(info_bp, url_prefix="/info")
+    app.register_blueprint(messages_bp, url_prefix="/messages")
 
     return app
 

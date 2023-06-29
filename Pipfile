@@ -10,6 +10,7 @@ gunicorn = "*"
 sqlalchemy = "*"
 retrying = "*"
 psycopg2-binary = "*"
+werkzeug = "*"
 
 [dev-packages]
 black = "*"

@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import List, Optional
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
@@ -33,7 +33,7 @@ class Thread(Base):
 class Message(Base):
     __tablename__ = "message"
 
-    id: Mapped[UUID] = mapped_column(primary_key=True)
+    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     thread_id: Mapped[UUID] = mapped_column(ForeignKey("thread.id"))
     body: Mapped[str]
     sent_at: Mapped[Optional[datetime]]
@@ -41,3 +41,13 @@ class Message(Base):
     sent_by: Mapped[UUID]
 
     thread: Mapped["Thread"] = relationship(back_populates="messages")
+
+    def to_response_dict(self):
+        return {
+            "id": self.id,
+            "thread_id": self.thread_id,
+            "body": self.body,
+            "sent_at": self.sent_at,
+            "is_from_internal": self.is_from_internal,
+            "sent_by": self.sent_by,
+        }
