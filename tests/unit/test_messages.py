@@ -1,7 +1,7 @@
 import json
 from unittest import TestCase
+from unittest.mock import patch
 
-from mock import patch
 from mock_alchemy.mocking import UnifiedAlchemyMagicMock
 
 from secure_message_v2.application import create_app
