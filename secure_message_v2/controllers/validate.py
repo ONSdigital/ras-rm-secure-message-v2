@@ -1,6 +1,6 @@
 import itertools
 
-from utils.utils import flatten_keys
+from secure_message_v2.utils.utils import flatten_keys
 
 
 class ValidatorBase:

@@ -2,9 +2,9 @@ import logging
 from datetime import datetime
 
 import structlog
-from utils.session_decorator import with_db_session
 
 from secure_message_v2.models.models import Message
+from secure_message_v2.utils.session_decorator import with_db_session
 
 logger = structlog.wrap_logger(logging.getLogger(__name__))
 
