@@ -1,6 +1,6 @@
 import logging
 
-from controllers.messages import post_message
+from controllers import messages
 from controllers.validate import Exists, Validator
 from flask import Blueprint, jsonify, make_response, request
 from structlog import wrap_logger
@@ -18,6 +18,6 @@ def post_message():
     if not v.validate(payload):
         logger.debug(v.errors, url=request.url)
         raise BadRequest(v.errors)
-    response = post_message(payload)
+    response = messages.post_message(payload)
 
     return make_response(jsonify(response), 201)
