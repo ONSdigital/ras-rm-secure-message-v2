@@ -1,7 +1,7 @@
 import logging
 
-from controllers.messages import post_new_message
-from controllers.validate import Exists, Validator
+from secure_message_v2.controllers.messages import post_new_message
+from secure_message_v2.controllers.validate import Exists, Validator
 from flask import Blueprint, jsonify, make_response, request
 from structlog import wrap_logger
 from werkzeug.exceptions import BadRequest
