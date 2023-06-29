@@ -9,7 +9,7 @@ logger = structlog.wrap_logger(logging.getLogger(__name__))
 
 
 @with_db_session
-def post_message(message, session):
+def post_new_message(message, session):
     """
     Post a message in an existing thread
     :param message: the message to be created
