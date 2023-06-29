@@ -13,5 +13,5 @@ class TestMessages(unittest.TestCase):
         # Payload is missing thread_id and sent_by
         bad_payload = {"body": "Hi this is a message", "is_from_internal": True}
         with self.app.app_context():
-            response = self.client.post("/messages", json=bad_payload)
+            response = self.client.post("/messages", json=bad_payload, follow_redirects=True)
             self.assertEqual(400, response.status_code)
