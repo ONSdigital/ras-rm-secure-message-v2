@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "7e4067d832dd0847e5264bc231c206f529db2bad6b89997229958432410bb476"
+            "sha256": "474744030942a0d8c524c9381af1cd70a1af44acf3916f694c5ebe51c5b09dba"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -185,6 +185,14 @@
             ],
             "markers": "python_version >= '3.7'",
             "version": "==2.1.3"
+        },
+        "mock-alchemy": {
+            "hashes": [
+                "sha256:807cc2bd7f658fb98292900052eaa6eeb4a65b2d62364e639462480a275299ef",
+                "sha256:d5e17f2c92d0299d70cd9a0d3c8f96f759a81c285c76b03f4192451583bf865f"
+            ],
+            "index": "pypi",
+            "version": "==0.2.6"
         },
         "psycopg2-binary": {
             "hashes": [

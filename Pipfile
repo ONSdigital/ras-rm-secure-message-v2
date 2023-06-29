@@ -11,6 +11,7 @@ sqlalchemy = "*"
 retrying = "*"
 psycopg2-binary = "*"
 werkzeug = "*"
+mock-alchemy = "*"
 
 [dev-packages]
 black = "*"
