@@ -25,13 +25,6 @@ def create_app(config=None):
 
     if config == "TestConfig":
         app.testing = True
-        engine = create_engine("sqlite://")
-        session = scoped_session(sessionmaker())
-        session.configure(bind=engine, autoflush=False, expire_on_commit=False)
-        engine.session = session
-        models.Base.query = session.query_property()
-        models.Base.metadata.create_all(engine)
-        app.db = engine
     return app
 
 

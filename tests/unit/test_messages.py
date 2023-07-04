@@ -38,9 +38,9 @@ class TestMessages(TestCase):
 
     def test_message_created_when_called(self):
         with self.app.app_context():
-            session = UnifiedAlchemyMagicMock()
-            result = post_new_message(good_payload, session)
-            session.add.assert_any_call()
+            self.app.db.session = UnifiedAlchemyMagicMock()
+            result = post_new_message(good_payload)
+            self.app.db.session.add.assert_any_call()
             self.assertDictContainsSubset(result, good_payload)
             self.assertTrue("id" in result)
             self.assertTrue("sent_at" in result)
