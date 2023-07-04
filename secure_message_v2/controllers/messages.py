@@ -17,13 +17,14 @@ def post_new_message(message, session):
     :param session
     :return: the created message object
     """
+    current_time = datetime.utcnow()
 
     message = Message(
         thread_id=message["thread_id"],
         body=message["body"],
         is_from_internal=message["is_from_internal"],
         sent_by=message["sent_by"],
-        sent_at=datetime.utcnow
+        sent_at=current_time,
     )
 
     session.add(message)
