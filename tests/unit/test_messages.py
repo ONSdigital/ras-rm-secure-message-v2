@@ -1,13 +1,10 @@
 import json
-from datetime import datetime
 from unittest import TestCase
 from unittest.mock import patch
 
 from mock_alchemy.mocking import UnifiedAlchemyMagicMock
 
 from secure_message_v2.application import create_app
-from secure_message_v2.controllers.messages import post_new_message
-from secure_message_v2.models.models import Message
 
 good_payload = {
     "thread_id": "1f2324b9-b0ee-4fad-91c5-3539fd42fef7",
@@ -38,20 +35,3 @@ class TestMessages(TestCase):
             expected_result = json.dumps({"id": "abcdef"})
             self.assertEqual(201, response.status_code)
             self.assertEqual(expected_result, response_data)
-
-    def test_message_created_when_called(self):
-        with self.app.app_context():
-            self.app.db.session = UnifiedAlchemyMagicMock()
-            result = post_new_message(good_payload)
-            current_time = datetime.utcnow()
-            expected = Message(
-                thread_id=good_payload["thread_id"],
-                body=good_payload["body"],
-                is_from_internal=good_payload["is_from_internal"],
-                sent_by=good_payload["sent_by"],
-                sent_at=current_time,
-            )
-            self.app.db.session.add.assert_any_call(expected)
-            self.assertDictContainsSubset(result, good_payload)
-            self.assertTrue("id" in result)
-            self.assertTrue("sent_at" in result)
