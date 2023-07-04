@@ -8,7 +8,7 @@ from secure_message_v2.application import create_app
 
 good_payload = {
     "thread_id": "1f2324b9-b0ee-4fad-91c5-3539fd42fef7",
-    "body": "Hi this is a message",
+    "body": "Hi this is a good message",
     "is_from_internal": True,
     "sent_by": "26410f78-1731-421f-a191-128833a1055c",
 }
