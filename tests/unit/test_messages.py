@@ -7,7 +7,7 @@ from mock_alchemy.mocking import UnifiedAlchemyMagicMock
 
 from secure_message_v2.application import create_app
 from secure_message_v2.controllers.messages import post_new_message
-from secure_message_v2.models import Message
+from secure_message_v2.models.models import Message
 
 good_payload = {
     "thread_id": "1f2324b9-b0ee-4fad-91c5-3539fd42fef7",
