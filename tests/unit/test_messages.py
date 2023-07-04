@@ -20,7 +20,6 @@ class TestMessages(TestCase):
     def setUp(self):
         self.app = create_app(config="TestConfig")
         self.client = self.app.test_client()
-        self.app.testing = True
 
     def test_post_message_bad_payload_returns_400(self):
         # Payload is missing thread_id and sent_by
@@ -28,7 +27,7 @@ class TestMessages(TestCase):
             response = self.client.post("/messages", json=bad_payload, follow_redirects=True)
             self.assertEqual(400, response.status_code)
 
-    @patch("controllers.messages.post_new_message", return_value={"id": "abcdef"})
+    @patch("secure_message_v2.controllers.messages.post_new_message", return_value={"id": "abcdef"})
     def test_successful_post_message_returns_201(self, mock):
         with self.app.app_context():
             response = self.client.post("/messages", json=good_payload, follow_redirects=True)

@@ -23,6 +23,15 @@ def create_app(config=None):
     app.register_blueprint(info_bp, url_prefix="/info")
     app.register_blueprint(messages_bp, url_prefix="/messages")
 
+    if config == "TestConfig":
+        app.testing = True
+        engine = create_engine("sqlite://")
+        session = scoped_session(sessionmaker())
+        session.configure(bind=engine, autoflush=False, expire_on_commit=False)
+        engine.session = session
+        models.Base.query = session.query_property()
+        models.Base.metadata.create_all(engine)
+        app.db = engine
     return app
 
 
