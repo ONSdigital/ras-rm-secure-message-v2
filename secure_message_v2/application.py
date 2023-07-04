@@ -25,6 +25,7 @@ def create_app(config=None):
 
     if config == "TestConfig":
         app.testing = True
+        app.db = create_engine("sqlite://")
     return app
 
 
