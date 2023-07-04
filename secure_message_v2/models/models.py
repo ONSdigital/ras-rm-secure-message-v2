@@ -13,7 +13,7 @@ class Base(DeclarativeBase):
 class Thread(Base):
     __tablename__ = "thread"
 
-    id: Mapped[UUID] = mapped_column(primary_key=True)
+    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     subject: Mapped[str]
     category: Mapped[str]
     is_closed: Mapped[Optional[bool]]
@@ -28,6 +28,23 @@ class Thread(Base):
     is_read_by_internal: Mapped[bool]
 
     messages: Mapped[List["Message"]] = relationship(back_populates="thread", cascade="all, delete-orphan")
+
+    def to_response_dict(self):
+        return {
+            "id": self.id,
+            "subject": self.subject,
+            "category": self.category,
+            "is_closed": self.is_closed,
+            "closed_by_id": self.closed_by_id,
+            "closed_at": self.closed_at,
+            "case_id": self.case_id,
+            "ru_ref": self.ru_ref,
+            "survey_id": self.survey_id,
+            "assigned_internal_user_id": self.assigned_internal_user_id,
+            "respondent_id": self.respondent_id,
+            "is_read_by_respondent": self.is_read_by_respondent,
+            "is_read_by_internal": self.is_read_by_internal,
+        }
 
 
 class Message(Base):
