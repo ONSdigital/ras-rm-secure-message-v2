@@ -23,8 +23,8 @@ def post_new_message(message, session):
         body=message["body"],
         is_from_internal=message["is_from_internal"],
         sent_by=message["sent_by"],
+        sent_at=datetime.utcnow
     )
-    message["sent_at"] = datetime.utcnow
 
     session.add(message)
 
