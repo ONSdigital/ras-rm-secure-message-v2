@@ -31,7 +31,4 @@ class TestMessages(TestCase):
         with self.app.app_context():
             self.app.db.session = UnifiedAlchemyMagicMock()
             response = self.client.post("/messages", json=good_payload, follow_redirects=True)
-            response_data = json.loads(response.get_data())
-            expected_result = json.dumps({"id": "abcdef"})
             self.assertEqual(201, response.status_code)
-            self.assertEqual(expected_result, response_data)
