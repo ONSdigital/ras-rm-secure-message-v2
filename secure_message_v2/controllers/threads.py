@@ -1,6 +1,7 @@
 import logging
 
 import structlog
+from sqlalchemy import select
 
 from secure_message_v2.models.models import Thread
 from secure_message_v2.utils.session_decorator import with_db_session
@@ -36,3 +37,18 @@ def post_new_thread(message, session):
     session.add(thread)
 
     return thread.to_response_dict()
+
+
+@with_db_session
+def update_read_status(thread_id, internally_read, externally_read, session):
+    """
+    Update the read status of a thread
+    :param thread_id: the UUID of the thread to be updated
+    :param internally_read: a boolean of whether it has been read internally
+    :param externally_read: a boolean of whether it has been read externally
+    :param session
+    """
+    thread = session.execute(select(Thread).filter_by(thread_id=thread_id)).scalar_one()
+    thread.is_read_by_internal = internally_read
+    thread.is_read_by_respondent = externally_read
+    session.flush()

@@ -3,6 +3,7 @@ from datetime import datetime
 
 import structlog
 
+from secure_message_v2.controllers.threads import update_read_status
 from secure_message_v2.models.models import Message
 from secure_message_v2.utils.session_decorator import with_db_session
 
@@ -27,6 +28,10 @@ def post_new_message(message, session):
         sent_at=current_time,
     )
 
-    session.add(message)
+    created_message = session.add(message)
 
-    return message.to_response_dict()
+    update_read_status(
+        created_message["thread_id"], created_message["is_from_internal"], not created_message["is_from_internal"]
+    )
+
+    return created_message.to_response_dict()
