@@ -49,7 +49,7 @@ def update_read_status(thread_id, internally_read, externally_read, session):
     :param externally_read: a boolean of whether it has been read externally
     :param session
     """
-    thread = session.execute(select(Thread).filter_by(thread_id=thread_id)).scalar_one()
+    thread = session.execute(select(Thread).filter_by(id=thread_id)).scalar_one()
     thread.is_read_by_internal = internally_read
     thread.is_read_by_respondent = externally_read
     session.flush()

@@ -11,7 +11,7 @@ logger = structlog.wrap_logger(logging.getLogger(__name__))
 
 
 @with_db_session
-def post_new_message(message, session):
+def post_new_message(posted_message, session):
     """
     Post a message in an existing thread
     :param message: the message to be created
@@ -21,10 +21,10 @@ def post_new_message(message, session):
     current_time = datetime.utcnow()
 
     message = Message(
-        thread_id=message["thread_id"],
-        body=message["body"],
-        is_from_internal=message["is_from_internal"],
-        sent_by=message["sent_by"],
+        thread_id=posted_message["thread_id"],
+        body=posted_message["body"],
+        is_from_internal=posted_message["is_from_internal"],
+        sent_by=posted_message["sent_by"],
         sent_at=current_time,
     )
 
