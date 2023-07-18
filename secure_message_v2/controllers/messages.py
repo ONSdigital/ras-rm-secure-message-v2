@@ -32,7 +32,7 @@ def post_new_message(message, session):
     session.flush()
 
     update_read_status(
-        message["thread_id"], message["is_from_internal"], not message["is_from_internal"]
+        message.thread_id, message.is_from_internal, not message.is_from_internal
     )
 
     return message.to_response_dict()
