@@ -25,9 +25,11 @@ class TestMessages(TestCase):
             response = self.client.post("/messages", json=bad_payload, follow_redirects=True)
             self.assertEqual(400, response.status_code)
 
-    @patch("secure_message_v2.controllers.messages.post_new_message", return_value={"id": "abcdef"})
+    @patch("secure_message_v2.controllers.messages")
     def test_successful_post_message_returns_201(self, mock):
         with self.app.app_context():
+            mock.post_new_message.return_value = {"id": "abcdef"}
+
             self.app.db.session = UnifiedAlchemyMagicMock()
             response = self.client.post("/messages", json=good_payload, follow_redirects=True)
             self.assertEqual(201, response.status_code)
