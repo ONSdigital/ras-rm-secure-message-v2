@@ -34,9 +34,9 @@ def post_new_thread(message, session):
         # We default to unread for both of these, as posting the message after will set the flags properly
     )
 
-    session.add(thread)
+    created_thread = session.add(thread)
 
-    return thread.to_response_dict()
+    return created_thread.to_response_dict()
 
 
 @with_db_session
