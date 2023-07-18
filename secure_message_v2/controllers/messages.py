@@ -28,12 +28,11 @@ def post_new_message(message, session):
         sent_at=current_time,
     )
 
-    created_message = session.add(message)
-
-    print(created_message)
+    session.add(message)
+    session.flush()
 
     update_read_status(
-        created_message["thread_id"], created_message["is_from_internal"], not created_message["is_from_internal"]
+        message["thread_id"], message["is_from_internal"], not message["is_from_internal"]
     )
 
-    return created_message.to_response_dict()
+    return message.to_response_dict()
