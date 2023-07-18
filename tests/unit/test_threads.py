@@ -23,7 +23,7 @@ class TestThreads(TestCase):
             response = self.client.post("/threads", json=bad_payload, follow_redirects=True)
             self.assertEqual(400, response.status_code)
 
-    @patch("secure_message_v2.controllers.threads.post_new_thread", return_value={"id": "abcdef"})
+    @patch("secure_message_v2.views.threads.post_new_thread", return_value={"id": "abcdef"})
     def test_successful_post_thread_returns_201(self, mock):
         with self.app.app_context():
             self.app.db.session = UnifiedAlchemyMagicMock()
