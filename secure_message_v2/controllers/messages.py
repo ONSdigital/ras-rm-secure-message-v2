@@ -30,7 +30,7 @@ def post_new_message(message, session):
 
     created_message = session.add(message)
 
-    logger.info(created_message)
+    print(vars(created_message))
 
     update_read_status(
         created_message["thread_id"], created_message["is_from_internal"], not created_message["is_from_internal"]
