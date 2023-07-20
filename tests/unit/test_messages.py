@@ -29,7 +29,7 @@ class TestMessages:
     def test_missing_thread_returns_404(self, app, mocker):
         with app.app_context():
             mock = mocker.patch("secure_message_v2.views.threads.post_new_thread")
-            mock.side_effect = IntegrityError()
+            mock.side_effect = IntegrityError("Test error", None, self)
 
             app.db.session = UnifiedAlchemyMagicMock()
             response = app.test_client().post("/messages", json=good_payload, follow_redirects=True)
