@@ -37,6 +37,17 @@ class Exists(ValidatorBase):
         self._errors = [self.ERROR_MESSAGE.format(d) for d in self._diff]
         return len(self._diff) == 0
 
+    def flatten_keys(d, prefix=None):
+        prefix = prefix or ""
+        result = []
+
+        for k, v in d.items():
+            result.append(".".join([prefix, k] if prefix else [k]))
+            if isinstance(v, dict):
+                result.extend(flatten_keys(v, prefix=".".join([prefix, k] if prefix else [k])))
+
+        return result
+
 
 class Validator:
     def __init__(self, *rules):
