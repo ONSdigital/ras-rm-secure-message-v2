@@ -2,7 +2,8 @@ import logging
 
 from flask import Blueprint, jsonify, make_response, request
 from structlog import wrap_logger
-from werkzeug.exceptions import BadRequest
+from werkzeug.exceptions import BadRequest, NotFound
+from sqlalchemy.exc import IntegrityError
 
 from secure_message_v2.controllers.messages import post_new_message
 from secure_message_v2.controllers.validate import Exists, Validator
@@ -19,6 +20,10 @@ def post_message():
     if not v.validate(payload):
         logger.debug(v.errors, url=request.url)
         raise BadRequest(v.errors)
-    response = post_new_message(payload)
+    try:
+        response = post_new_message(payload)
+    except IntegrityError:
+        logger.debug("The specified Thread ID does not exist", thread_id=payload["thread_id"])
+        raise NotFound("The specified Thread ID does not exist")
 
     return make_response(jsonify(response), 201)

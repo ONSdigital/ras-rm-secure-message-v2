@@ -2,6 +2,7 @@ import logging
 
 import structlog
 from sqlalchemy import select
+from sqlalchemy.orm import Session
 
 from secure_message_v2.models.models import Thread
 from secure_message_v2.utils.session_decorator import with_db_session
@@ -10,27 +11,27 @@ logger = structlog.wrap_logger(logging.getLogger(__name__))
 
 
 @with_db_session
-def post_new_thread(message, session):
+def post_new_thread(posted_message: dict, session: Session):
     """
     Post a new thread
-    :param message: the thread to be created
+    :param posted_message: the thread to be created
     :param session
     :return: the created thread object
     """
 
     thread = Thread(
-        subject=message["subject"],
-        category=message["category"],
-        is_closed=message.get("is_closed", False),
-        closed_by_id=message.get("closed_by_id", None),
-        closed_at=message.get("closed_at", None),
-        case_id=message.get("case_id", None),
-        ru_ref=message.get("ru_ref", None),
-        survey_id=message.get("survey_id", None),
-        assigned_internal_user_id=message.get("assigned_internal_user_id", None),
-        respondent_id=message.get("respondent_id", None),
-        is_read_by_respondent=message.get("is_read_by_respondent", False),
-        is_read_by_internal=message.get("is_read_by_internal", False),
+        subject=posted_message["subject"],
+        category=posted_message["category"],
+        is_closed=posted_message.get("is_closed", False),
+        closed_by_id=posted_message.get("closed_by_id", None),
+        closed_at=posted_message.get("closed_at", None),
+        case_id=posted_message.get("case_id", None),
+        ru_ref=posted_message.get("ru_ref", None),
+        survey_id=posted_message.get("survey_id", None),
+        assigned_internal_user_id=posted_message.get("assigned_internal_user_id", None),
+        respondent_id=posted_message.get("respondent_id", None),
+        is_read_by_respondent=posted_message.get("is_read_by_respondent", False),
+        is_read_by_internal=posted_message.get("is_read_by_internal", False),
         # We default to unread for both of these, as posting the message after will set the flags properly
     )
 
