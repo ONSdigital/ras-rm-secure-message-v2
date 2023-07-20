@@ -19,6 +19,7 @@ pytest = "*"
 flake8 = "*"
 mock-alchemy = "*"
 pytest-mock = "*"
+mypy = "*"
 
 [requires]
 python_version = "3.11"
