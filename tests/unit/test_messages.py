@@ -59,4 +59,4 @@ class TestMessages:
             "sent_by": "26410f78-1731-421f-a191-128833a1055c",
         }
 
-        assert message.to_response_dict == expected
+        assert message.to_response_dict() == expected
