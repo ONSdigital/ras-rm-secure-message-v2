@@ -1,5 +1,8 @@
 from mock_alchemy.mocking import UnifiedAlchemyMagicMock
 from sqlalchemy.exc import IntegrityError
+from datetime import datetime
+
+from secure_message_v2.models.models import Message
 
 good_payload = {
     "thread_id": "1f2324b9-b0ee-4fad-91c5-3539fd42fef7",
@@ -34,3 +37,25 @@ class TestMessages:
             app.db.session = UnifiedAlchemyMagicMock()
             response = app.test_client().post("/messages", json=good_payload, follow_redirects=True)
             assert 404 == response.status_code
+    
+    def test_message_to_response_dict(self):
+        timestamp = datetime.utcnow()
+        message = Message(
+            id = "6357bf6c-d145-454d-84c5-bbe0d270b742",
+            thread_id="1f2324b9-b0ee-4fad-91c5-3539fd42fef7",
+            body="Hi this is a good message",
+            is_from_internal=True,
+            sent_by="26410f78-1731-421f-a191-128833a1055c",
+            sent_at=timestamp,
+        )
+
+        expected = {
+            "id": "6357bf6c-d145-454d-84c5-bbe0d270b742",
+            "thread_id": "1f2324b9-b0ee-4fad-91c5-3539fd42fef7",
+            "body": "Hi this is a good message",
+            "sent_at": timestamp,
+            "is_from_internal": True,
+            "sent_by": "26410f78-1731-421f-a191-128833a1055c",
+        }
+
+        assert message.to_response_dict == expected
