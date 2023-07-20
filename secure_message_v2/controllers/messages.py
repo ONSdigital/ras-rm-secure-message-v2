@@ -2,9 +2,8 @@ import logging
 from datetime import datetime
 
 import structlog
-
-from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import Session
 
 from secure_message_v2.controllers.threads import update_read_status
 from secure_message_v2.models.models import Message
@@ -37,8 +36,6 @@ def post_new_message(posted_message: dict, session: Session):
     except IntegrityError:
         raise
 
-    update_read_status(
-        message.thread_id, message.is_from_internal, not message.is_from_internal
-    )
+    update_read_status(message.thread_id, message.is_from_internal, not message.is_from_internal)
 
     return message.to_response_dict()

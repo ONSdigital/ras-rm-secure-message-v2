@@ -1,9 +1,9 @@
 import logging
 
 from flask import Blueprint, jsonify, make_response, request
+from sqlalchemy.exc import IntegrityError
 from structlog import wrap_logger
 from werkzeug.exceptions import BadRequest, NotFound
-from sqlalchemy.exc import IntegrityError
 
 from secure_message_v2.controllers.messages import post_new_message
 from secure_message_v2.controllers.validate import Exists, Validator
