@@ -18,8 +18,8 @@ class TestMessages:
 
     def test_successful_post_message_returns_201(self, app, mocker):
         with app.app_context():
-            mock = mocker.patch("secure_message_v2.views.messages")
-            mock.post_new_message.return_value = {"id": "abcdef"}
+            mock = mocker.patch("secure_message_v2.views.messages.post_new_message")
+            mock.return_value = {"id": "abcdef"}
 
             app.db.session = UnifiedAlchemyMagicMock()
             response = app.test_client().post("/messages", json=good_payload, follow_redirects=True)

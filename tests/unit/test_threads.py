@@ -16,8 +16,8 @@ class TestThreads:
 
     def test_successful_post_thread_returns_201(self, app, mocker):
         with app.app_context():
-            mock = mocker.patch("secure_message_v2.views.threads")
-            mock.post_new_thread.return_value = {"id": "abcdef"}
+            mock = mocker.patch("secure_message_v2.views.threads.post_new_thread")
+            mock.return_value = {"id": "abcdef"}
 
             app.db.session = UnifiedAlchemyMagicMock()
             response = app.test_client().post("/threads", json=good_payload, follow_redirects=True)
