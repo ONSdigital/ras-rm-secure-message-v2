@@ -1,4 +1,5 @@
 from mock_alchemy.mocking import UnifiedAlchemyMagicMock
+from sqlalchemy.exc import IntegrityError
 
 good_payload = {
     "thread_id": "1f2324b9-b0ee-4fad-91c5-3539fd42fef7",
@@ -24,3 +25,12 @@ class TestMessages:
             app.db.session = UnifiedAlchemyMagicMock()
             response = app.test_client().post("/messages", json=good_payload, follow_redirects=True)
             assert 201 == response.status_code
+
+    def test_missing_thread_returns_404(self, app, mocker):
+        with app.app_context():
+            mock = mocker.patch("secure_message_v2.views.threads.post_new_thread")
+            mock.side_effect = IntegrityError()
+
+            app.db.session = UnifiedAlchemyMagicMock()
+            response = app.test_client().post("/messages", json=good_payload, follow_redirects=True)
+            assert 404 == response.status_code
