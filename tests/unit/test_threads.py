@@ -1,5 +1,7 @@
-from mock_alchemy.mocking import UnifiedAlchemyMagicMock
 from datetime import datetime
+
+from mock_alchemy.mocking import UnifiedAlchemyMagicMock
+
 from secure_message_v2.models.models import Thread
 
 good_payload = {
@@ -27,7 +29,7 @@ class TestThreads:
 
     def test_thread_to_response_dict(self):
         message = Thread(
-            id = "876d0631-6e01-4871-90a4-437aca83a1c4",
+            id="876d0631-6e01-4871-90a4-437aca83a1c4",
             subject="Test Thread Subject",
             category="TEST",
             is_closed=False,
@@ -39,7 +41,7 @@ class TestThreads:
             assigned_internal_user_id="9aff20e1-6a41-4b81-9979-55f306d0445f",
             respondent_id="d8ff1fe6-e482-4cc5-87fa-7949aa765f37",
             is_read_by_respondent=True,
-            is_read_by_internal=False
+            is_read_by_internal=False,
         )
 
         expected = {
@@ -55,7 +57,7 @@ class TestThreads:
             "assigned_internal_user_id": "9aff20e1-6a41-4b81-9979-55f306d0445f",
             "respondent_id": "d8ff1fe6-e482-4cc5-87fa-7949aa765f37",
             "is_read_by_respondent": True,
-            "is_read_by_internal": False
+            "is_read_by_internal": False,
         }
 
         assert message.to_response_dict() == expected
