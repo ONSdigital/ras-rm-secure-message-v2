@@ -1,8 +1,6 @@
 import pytest
 from mock_alchemy.mocking import UnifiedAlchemyMagicMock
 
-from secure_message_v2.application import create_app
-
 good_payload = {
     "subject": "Test Thread Subject",
     "category": "TEST",
