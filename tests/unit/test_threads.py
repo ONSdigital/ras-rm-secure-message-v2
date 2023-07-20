@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from mock_alchemy.mocking import UnifiedAlchemyMagicMock
 
 from secure_message_v2.models.models import Thread
