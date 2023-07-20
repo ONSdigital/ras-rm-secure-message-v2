@@ -1,6 +1,3 @@
-import pytest
-
-
 class TestInfo:
     def test_get_info(self, app):
         response = app.test_client().get("/info/")
