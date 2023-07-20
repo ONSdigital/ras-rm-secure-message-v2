@@ -11,13 +11,13 @@ sqlalchemy = "*"
 retrying = "*"
 psycopg2-binary = "*"
 werkzeug = "*"
-mock-alchemy = "*"
 
 [dev-packages]
 black = "*"
 isort = "*"
 pytest = "*"
 flake8 = "*"
+mock-alchemy = "*"
 
 [requires]
 python_version = "3.11"

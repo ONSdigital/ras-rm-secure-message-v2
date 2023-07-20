@@ -43,9 +43,6 @@ class Validator:
         self._rules = list(rules)
         self.valid = True
 
-    def add_rule(self, r):
-        self._rules.append(r)
-
     def validate(self, d):
         self.valid = all([r(d) for r in self._rules])
         return self.valid
