@@ -18,6 +18,7 @@ isort = "*"
 pytest = "*"
 flake8 = "*"
 mock-alchemy = "*"
+pytest-mock = "*"
 
 [requires]
 python_version = "3.11"

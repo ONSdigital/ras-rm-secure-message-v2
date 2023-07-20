@@ -1,16 +1,9 @@
-import unittest
-
-from secure_message_v2.application import create_app
+import pytest
 
 
-class TestInfo(unittest.TestCase):
-    def setUp(self):
-        self.app = create_app(config="TestConfig")
-        self.client = self.app.test_client()
-        self.app.testing = True
+class TestInfo:
+    def test_get_info(self, app):
+        response = app.test_client().get("/info/")
 
-    def test_get_info(self):
-        response = self.client.get("/info/")
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIn('"name":"ras-rm-secure-message-v2"'.encode(), response.data)
+        assert response.status_code == 200
+        assert '"name":"ras-rm-secure-message-v2"'.encode() in response.data
