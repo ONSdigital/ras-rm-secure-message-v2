@@ -1,8 +1,6 @@
 *.py[cod]
-mypy.ini
 htmlcov/
 .pytest_cache
 .mypy_cache
-.isort.cfg
 .idea
 .coverage
