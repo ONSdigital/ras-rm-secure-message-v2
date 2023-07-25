@@ -15,9 +15,3 @@ class Config:
 
     DATABASE_SCHEMA = os.getenv("DATABASE_SCHEMA", "securemessages")
     DATABASE_URI = os.getenv("DATABASE_URI", "postgresql://postgres:postgres@localhost:5432/postgres")
-
-
-class TestConfig(Config):
-    """
-    Put test-specific config here
-    """

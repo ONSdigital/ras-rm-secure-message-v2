@@ -1,4 +1,5 @@
 import itertools
+from typing import Any
 
 
 class ValidatorBase:
@@ -13,23 +14,23 @@ class ValidatorBase:
     multiple error messages can be set.
     """
 
-    def __init__(self):
-        self._errors = []
+    def __init__(self) -> None:
+        self._errors: list[str] = []
 
     @property
-    def errors(self):
+    def errors(self) -> list[str]:
         return self._errors
 
 
 class Exists(ValidatorBase):
     ERROR_MESSAGE = "Required key '{}' is missing."
 
-    def __init__(self, *keys):
+    def __init__(self, *keys: str) -> None:
         super().__init__()
         self._keys = set(keys)
-        self._diff = []
+        self._diff: set[Any]
 
-    def __call__(self, data):
+    def __call__(self, data: dict) -> bool:
         keys = flatten_keys(data)
         self._diff = self._keys.difference(keys)
         self._errors = [self.ERROR_MESSAGE.format(d) for d in self._diff]
@@ -37,26 +38,24 @@ class Exists(ValidatorBase):
 
 
 class Validator:
-    def __init__(self, *rules):
-        self._rules = list(rules)
+    def __init__(self, *rules: Any):
+        self._rules: list = list(rules)
         self.valid = True
 
-    def validate(self, d):
+    def validate(self, d: dict) -> bool:
         self.valid = all([r(d) for r in self._rules])
         return self.valid
 
     @property
-    def errors(self):
+    def errors(self) -> list:
         return list(itertools.chain(*[r.errors for r in self._rules]))
 
 
-def flatten_keys(d, prefix=None):
+def flatten_keys(d: dict, prefix: str = "") -> list[str]:
     prefix = prefix or ""
     result = []
 
     for k, v in d.items():
         result.append(".".join([prefix, k] if prefix else [k]))
-        if isinstance(v, dict):
-            result.extend(flatten_keys(v, prefix=".".join([prefix, k] if prefix else [k])))
 
     return result

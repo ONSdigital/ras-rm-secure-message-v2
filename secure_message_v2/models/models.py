@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional, Union
 from uuid import UUID, uuid4
 
 from sqlalchemy import ForeignKey
@@ -29,7 +29,7 @@ class Thread(Base):
 
     messages: Mapped[List["Message"]] = relationship(back_populates="thread", cascade="all, delete-orphan")
 
-    def to_response_dict(self):
+    def to_response_dict(self) -> dict[str, Optional[Union[UUID, str, bool, datetime]]]:
         return {
             "id": self.id,
             "subject": self.subject,
@@ -59,7 +59,7 @@ class Message(Base):
 
     thread: Mapped["Thread"] = relationship(back_populates="messages")
 
-    def to_response_dict(self):
+    def to_response_dict(self) -> dict[str, Optional[Union[UUID, str, bool, datetime]]]:
         return {
             "id": self.id,
             "thread_id": self.thread_id,

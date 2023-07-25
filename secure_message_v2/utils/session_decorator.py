@@ -15,7 +15,7 @@ def handle_session(f, args, kwargs):
         session.commit()
         return result
     except SQLAlchemyError:
-        logger.error("Something went wrong accessing database", exc_info=True)
+        logger.error("Something went wrong accessing database")
         session.rollback()
         raise
     finally:

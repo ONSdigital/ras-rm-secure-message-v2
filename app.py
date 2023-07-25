@@ -12,7 +12,7 @@ This is a duplicate of run.py, with minor modifications to support gunicorn exec
 
 logger = wrap_logger(logging.getLogger(__name__))
 
-app = create_app("Config")
+app = create_app()
 
 logger.debug("Created Flask app.")
 

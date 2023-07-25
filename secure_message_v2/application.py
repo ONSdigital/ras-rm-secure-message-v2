@@ -1,5 +1,4 @@
 import logging
-import os
 
 from flask import Flask
 from sqlalchemy import DDL, create_engine, event
@@ -14,24 +13,21 @@ from secure_message_v2.views.threads import threads_bp
 logger = wrap_logger(logging.getLogger(__name__))
 
 
-def create_app(config=None):
+def create_app():
     app = Flask(__name__)
     app.name = "ras-rm-secure-message-v2"
     logger.info("Creating app", name=app.name)
-    app_config = f"config.{config or os.getenv('APP_SETTINGS', 'Config')}"
+    app_config = "config.Config"
     app.config.from_object(app_config)
 
     app.register_blueprint(info_bp, url_prefix="/info")
     app.register_blueprint(messages_bp, url_prefix="/messages")
     app.register_blueprint(threads_bp, url_prefix="/threads")
 
-    if config == "TestConfig":
-        app.testing = True
-        app.db = create_engine("sqlite://")
     return app
 
 
-def create_database(db_connection, db_schema):
+def create_database(db_connection, db_schema):  # pragma: no cover
     engine = create_engine(db_connection)
 
     @event.listens_for(engine, "connect", insert=True)

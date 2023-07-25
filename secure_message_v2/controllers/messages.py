@@ -1,8 +1,9 @@
 import logging
 from datetime import datetime
+from typing import Optional, Union
+from uuid import UUID
 
 import structlog
-from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from secure_message_v2.controllers.threads import update_read_status
@@ -13,29 +14,23 @@ logger = structlog.wrap_logger(logging.getLogger(__name__))
 
 
 @with_db_session
-def post_new_message(posted_message: dict, session: Session):
+def create_message(message_payload: dict, session: Session) -> dict[str, Optional[Union[UUID, str, bool, datetime]]]:
     """
-    Post a message in an existing thread
-    :param posted_message: the message to be created
+    creates a message in an existing thread
+    :param message_payload: the message payload from which to create the message
     :param session
     :return: the created message object
     """
-    current_time = datetime.utcnow()
 
     message = Message(
-        thread_id=posted_message["thread_id"],
-        body=posted_message["body"],
-        is_from_internal=posted_message["is_from_internal"],
-        sent_by=posted_message["sent_by"],
-        sent_at=current_time,
+        thread_id=message_payload["thread_id"],
+        body=message_payload["body"],
+        is_from_internal=message_payload["is_from_internal"],
+        sent_by=message_payload["sent_by"],
+        sent_at=datetime.utcnow(),
     )
-
-    try:
-        session.add(message)
-        session.flush()
-    except IntegrityError:
-        raise
-
+    session.add(message)
+    session.flush()
     update_read_status(message.thread_id, message.is_from_internal, not message.is_from_internal)
 
     return message.to_response_dict()
