@@ -20,7 +20,7 @@ def initialise_db(app):
 
 
 if __name__ == "__main__":
-    app = create_app("Config")
+    app = create_app()
 
     try:
         initialise_db(app)

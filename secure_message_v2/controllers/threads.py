@@ -1,0 +1,57 @@
+import logging
+from datetime import datetime
+from typing import Optional, Union
+from uuid import UUID
+
+import structlog
+from sqlalchemy.orm import Session
+
+from secure_message_v2.models.models import Thread
+from secure_message_v2.utils.session_decorator import with_db_session
+
+logger = structlog.wrap_logger(logging.getLogger(__name__))
+
+
+@with_db_session
+def create_thread(thread_payload: dict, session: Session) -> dict[str, Optional[Union[UUID, str, bool, datetime]]]:
+    """
+    creates a new thread
+    :param thread_payload: the thread payload from which to create the thread
+    :param session
+    :return: the created thread object
+    """
+
+    thread = Thread(
+        subject=thread_payload["subject"],
+        category=thread_payload["category"],
+        is_closed=thread_payload.get("is_closed", False),
+        closed_by_id=thread_payload.get("closed_by_id"),
+        closed_at=thread_payload.get("closed_at"),
+        case_id=thread_payload.get("case_id"),
+        ru_ref=thread_payload.get("ru_ref"),
+        survey_id=thread_payload.get("survey_id"),
+        assigned_internal_user_id=thread_payload.get("assigned_internal_user_id"),
+        respondent_id=thread_payload.get("respondent_id"),
+        is_read_by_respondent=thread_payload.get("is_read_by_respondent", False),
+        is_read_by_internal=thread_payload.get("is_read_by_internal", False),
+        # We default to unread for both of these, as posting the message after will set the flags properly
+    )
+
+    session.add(thread)
+    session.flush()
+    return thread.to_response_dict()
+
+
+@with_db_session
+def update_read_status(thread_id: str, internally_read: bool, externally_read: bool, session: Session) -> None:
+    """
+    Update the read status of a thread
+    :param thread_id: the UUID of the thread to be updated
+    :param internally_read: a boolean of whether it has been read internally
+    :param externally_read: a boolean of whether it has been read externally
+    :param session
+    """
+
+    thread = session.query(Thread).filter_by(id=thread_id).one()
+    thread.is_read_by_internal = internally_read
+    thread.is_read_by_respondent = externally_read
