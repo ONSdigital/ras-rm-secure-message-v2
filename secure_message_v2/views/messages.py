@@ -19,7 +19,8 @@ THREAD_ID_MISSING = "The specified Thread does not exist in the database"
 @messages_bp.route("/", methods=["POST"])
 def post_message() -> Response:
     payload = request.get_json()
-    v = Validator(Exists("thread_id", "sent_by"))
+    logger.info(payload)
+    v = Validator(Exists("thread_id", "body", "is_from_internal", "sent_by"))
     if not v.validate(payload):
         logger.error(v.errors, url=request.url)
         raise BadRequest(str(v.errors))
