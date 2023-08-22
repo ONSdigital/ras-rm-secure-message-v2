@@ -1,7 +1,5 @@
 import logging
 from datetime import datetime
-from typing import Optional, Union
-from uuid import UUID
 
 import structlog
 from sqlalchemy.orm import Session
@@ -14,7 +12,7 @@ logger = structlog.wrap_logger(logging.getLogger(__name__))
 
 
 @with_db_session
-def create_message(message_payload: dict, session: Session) -> dict[str, Optional[Union[UUID, str, bool, datetime]]]:
+def create_message(message_payload: dict, session: Session) -> Message:
     """
     creates a message in an existing thread
     :param message_payload: the message payload from which to create the message
@@ -30,7 +28,6 @@ def create_message(message_payload: dict, session: Session) -> dict[str, Optiona
         sent_at=datetime.utcnow(),
     )
     session.add(message)
-    session.flush()
-    update_read_status(message.thread_id, message.is_from_internal, not message.is_from_internal)
+    update_read_status(message_payload["thread_id"], message.is_from_internal, not message.is_from_internal, session)
 
-    return message.to_response_dict()
+    return message
