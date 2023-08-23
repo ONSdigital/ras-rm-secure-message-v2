@@ -1,11 +1,16 @@
 import logging
 
 from flask import Blueprint, Response, jsonify, make_response, request
-from sqlalchemy.exc import StatementError
+from sqlalchemy.exc import NoResultFound, StatementError
 from structlog import wrap_logger
-from werkzeug.exceptions import BadRequest
+from werkzeug.exceptions import BadRequest, NotFound
 
-from secure_message_v2.controllers.threads import create_thread
+from secure_message_v2.controllers.threads import (
+    FilterCriteriaNotImplemented,
+    create_thread,
+    get_thread_by_id,
+    get_threads_by_args,
+)
 from secure_message_v2.controllers.validate import Exists, Validator
 
 logger = wrap_logger(logging.getLogger(__name__))
@@ -13,6 +18,31 @@ logger = wrap_logger(logging.getLogger(__name__))
 threads_bp = Blueprint("threads_bp", __name__)
 
 PAYLOAD_MALFORMED = "The thread payload is malformed"
+THREAD_NOT_FOUND = "The thread id does not match a thread in the database"
+
+
+@threads_bp.route("/<thread_id>/", methods=["GET"])
+def get_thread(thread_id: str) -> Response:
+    try:
+        thread = get_thread_by_id(thread_id)
+    except NoResultFound:
+        raise NotFound(THREAD_NOT_FOUND)
+
+    return make_response(jsonify(thread.to_response_dict()), 200)
+
+
+@threads_bp.route("/", methods=["GET"])
+def get_threads_by_request_args() -> Response:
+    try:
+        threads = get_threads_by_args(request.args)
+    except FilterCriteriaNotImplemented as e:
+        raise BadRequest(e.error_message)
+
+    response_data = []
+    for thread in threads:
+        response_data.append(thread.to_response_dict())
+
+    return make_response(response_data, 200)
 
 
 @threads_bp.route("/", methods=["POST"])
@@ -24,9 +54,9 @@ def post_thread() -> Response:
         raise BadRequest(str(v.errors))
 
     try:
-        response = create_thread(payload)
+        thread = create_thread(payload)
     except StatementError:
         logger.error(PAYLOAD_MALFORMED)
         raise BadRequest(PAYLOAD_MALFORMED)
 
-    return make_response(jsonify(response), 201)
+    return make_response(jsonify(thread.to_response_dict()), 201)

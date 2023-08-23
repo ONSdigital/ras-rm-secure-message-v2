@@ -2,12 +2,11 @@ import uuid
 from datetime import datetime, timezone
 
 import pytest
-from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session, sessionmaker
-from sqlalchemy.sql import text
 
 from secure_message_v2.application import create_app
 from secure_message_v2.models import models
+
+THREAD_ID = uuid.UUID("1f2324b9-b0ee-4fad-91c5-3539fd42fef7")
 
 
 @pytest.fixture(scope="session")
@@ -15,22 +14,10 @@ def app():
     return create_app()
 
 
-@pytest.fixture(scope="session")
-def app_with_db_session(app):
-    app.db = create_engine("sqlite://")
-    models.Base.metadata.create_all(app.db)
-    app.db.session = scoped_session(
-        sessionmaker(autocommit=False, autoflush=False, bind=app.db, expire_on_commit=False)
-    )
-    app.db.session.execute(text("PRAGMA foreign_keys = ON;"))
-    _seed_db(app)
-    return app
-
-
 @pytest.fixture()
-def valid_message():
+def valid_message_payload():
     return {
-        "thread_id": uuid.UUID("1f2324b9-b0ee-4fad-91c5-3539fd42fef7"),
+        "thread_id": THREAD_ID,
         "body": "body",
         "is_from_internal": True,
         "sent_by": uuid.UUID("26410f78-1731-421f-a191-128833a1055c"),
@@ -38,28 +25,28 @@ def valid_message():
 
 
 @pytest.fixture()
-def invalid_message_no_thread(valid_message):
-    message_no_thread = valid_message.copy()
+def invalid_message_payload_no_thread(valid_message_payload):
+    message_no_thread = valid_message_payload.copy()
     message_no_thread["thread_id"] = uuid.UUID("2f2324b9-b0ee-4fad-91c5-3539fd42fef7")
     return message_no_thread
 
 
 @pytest.fixture()
-def invalid_message_malformed(valid_message):
-    message_malformed = valid_message.copy()
+def invalid_message_payload_malformed(valid_message_payload):
+    message_malformed = valid_message_payload.copy()
     message_malformed["is_from_internal"] = "not bool"
     return message_malformed
 
 
 @pytest.fixture()
-def invalid_message_missing_key(valid_message):
-    message_missing_key = valid_message.copy()
+def invalid_message_payload_missing_key(valid_message_payload):
+    message_missing_key = valid_message_payload.copy()
     message_missing_key.pop("body")
     return message_missing_key
 
 
 @pytest.fixture()
-def valid_thread():
+def valid_thread_payload():
     return {
         "subject": "subject",
         "category": "category",
@@ -77,29 +64,37 @@ def valid_thread():
 
 
 @pytest.fixture()
-def invalid_thread_missing_key(valid_thread):
-    thread_missing_key = valid_thread.copy()
+def invalid_thread_payload_missing_key(valid_thread_payload):
+    thread_missing_key = valid_thread_payload.copy()
     thread_missing_key.pop("category")
     return thread_missing_key
 
 
 @pytest.fixture()
-def invalid_thread_malformed(valid_thread):
-    thread_malformed = valid_thread.copy()
+def invalid_thread_payload_malformed(valid_thread_payload):
+    thread_malformed = valid_thread_payload.copy()
     thread_malformed["is_closed"] = "not bool"
     return thread_malformed
 
 
-def _seed_db(app):
-    app.db.session.add(
-        models.Thread(
-            id=uuid.UUID("1f2324b9-b0ee-4fad-91c5-3539fd42fef7"),
-            is_closed=False,
-            is_read_by_respondent=False,
-            is_read_by_internal=False,
-            subject="subject",
-            category="category",
-        )
+@pytest.fixture()
+def message():
+    return models.Message(
+        thread_id=THREAD_ID,
+        body="body",
+        is_from_internal=True,
+        sent_by="26410f78-1731-421f-a191-128833a1055c",
     )
-    app.db.session.commit()
-    return app
+
+
+@pytest.fixture()
+def thread():
+    return models.Thread(
+        id=THREAD_ID,
+        is_closed=False,
+        is_read_by_respondent=False,
+        is_read_by_internal=False,
+        subject="subject",
+        category="category",
+        survey_id=uuid.UUID("d6b47eb8-2a14-11ee-be56-0242ac120002"),
+    )

@@ -1,19 +1,56 @@
 import logging
-from datetime import datetime
-from typing import Optional, Union
-from uuid import UUID
 
 import structlog
 from sqlalchemy.orm import Session
 
+from secure_message_v2.controllers.queries import (
+    query_thread_by_filter_criteria,
+    query_thread_by_id,
+)
 from secure_message_v2.models.models import Thread
 from secure_message_v2.utils.session_decorator import with_db_session
 
 logger = structlog.wrap_logger(logging.getLogger(__name__))
 
 
+class FilterCriteriaNotImplemented(Exception):
+    def __init__(self, error_message: str) -> None:
+        self.error_message = error_message
+
+
 @with_db_session
-def create_thread(thread_payload: dict, session: Session) -> dict[str, Optional[Union[UUID, str, bool, datetime]]]:
+def get_thread_by_id(thread_id: str, session: Session) -> Thread:
+    """
+    gets the thread using thread_id
+    :param thread_id: the id of the thread searching for
+    :param session
+    :return: the thread object
+    """
+    return query_thread_by_id(thread_id, session)
+
+
+@with_db_session
+def get_threads_by_args(args: dict, session: Session) -> list[Thread]:
+    """
+    gets threads using a key/value dict of arguments
+    :param args: the arguments to searching for
+    :param session
+    :return: list of thread objects
+    """
+
+    criteria = []
+    for key, value in args.items():
+        if key == "survey_id":
+            criteria.append(Thread.survey_id == value)
+        else:
+            logger.error(f"invalid argument {key} used to filter Thread")
+            raise FilterCriteriaNotImplemented(f"You can not filter on {key}")
+
+    return query_thread_by_filter_criteria(criteria, session)
+
+
+@with_db_session
+def create_thread(thread_payload: dict, session: Session) -> Thread:
     """
     creates a new thread
     :param thread_payload: the thread payload from which to create the thread
@@ -38,11 +75,9 @@ def create_thread(thread_payload: dict, session: Session) -> dict[str, Optional[
     )
 
     session.add(thread)
-    session.flush()
-    return thread.to_response_dict()
+    return thread
 
 
-@with_db_session
 def update_read_status(thread_id: str, internally_read: bool, externally_read: bool, session: Session) -> None:
     """
     Update the read status of a thread
@@ -52,6 +87,6 @@ def update_read_status(thread_id: str, internally_read: bool, externally_read: b
     :param session
     """
 
-    thread = session.query(Thread).filter_by(id=thread_id).one()
+    thread = query_thread_by_id(thread_id, session)
     thread.is_read_by_internal = internally_read
     thread.is_read_by_respondent = externally_read
