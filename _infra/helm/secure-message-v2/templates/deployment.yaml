@@ -110,10 +110,11 @@ spec:
                 name: db-config
                 key: db-port
           - name: DB_NAME
-            valueFrom:
-              secretKeyRef:
-                name: db-config
-                key: {{ .Values.database.secrets.nameKey }}
+            value: "securemessages"
+#            valueFrom:
+#              secretKeyRef:
+#                name: db-config
+#                key: {{ .Values.database.secrets.nameKey }}
           - name: DB_USERNAME
             valueFrom:
               secretKeyRef:
