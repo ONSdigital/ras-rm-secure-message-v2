@@ -24,5 +24,3 @@ You can use the following command to run the application locally on localhost po
 ```bash
 make start
 ```
-
-force build
