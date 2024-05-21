@@ -1,0 +1,576 @@
+openapi: 3.1.0
+info:
+  title: Secure message v2
+  description: An updated service for sending and recieving secure messages
+  version: 1.0.0
+servers:
+  - url: https://localhost:5051
+    description: The path used by the secure message service when port forwarded through kubectl (5051:8080)
+tags:
+  - name: Messages
+    description: Message endpoints
+  - name: Threads
+    description: Thread endpoints
+  - name: Existing
+    description: Existing secure message functionality
+  - name: New
+    description: New to secure message v2
+paths:
+  /messages:
+    post:
+      tags:
+        - Messages
+        - Existing
+      summary: Post a new message to a thread
+      description: Create an additional message linked to an already created thread
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                thread_id:
+                  type: string
+                  format: uuid
+                  example: 91e0bb4f-ffad-404c-af1b-01c87037119c
+                body:
+                  type: string
+                  example: I would like some help with this survey
+                is_from_internal:
+                  type: boolean
+                  example: true
+                sent_by:
+                  type: string
+                  format: uuid
+                  example: 6934f0c7-b595-435b-aa8f-291d6b6070d3
+      responses:
+        201:
+          description: Message created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        400:
+          description: Payload was incorrect
+        405:
+          description: Method not allowed
+  /messages/{message_id}:
+    patch:
+      tags:
+        - Messages
+        - New
+      summary: Patch a message by the message_id
+      description: Update a message's data by the `message_id`
+      parameters:
+        - name: message_id
+          in: path
+          description: UUID of the message
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                body:
+                  type: string
+                  example: I cannot access this survey
+                sent_by:
+                  type: string
+                  format: uuid
+                  example: 6934f0c7-b595-435b-aa8f-291d6b6070d3
+      responses:
+        200:
+          description: Message patched
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        400:
+          description: Client Error
+        404:
+          description: Message not found
+        405:
+          description: Method not allowed
+  /threads:
+    get:
+      tags:
+        - Threads
+        - Existing
+      summary: Get threads with certain parameters
+      description: Get a filtered list of threads based on a number of supplied query parameters
+      parameters:
+        - name: ru_ref
+          in: query
+          description: A string that refers to a specific business
+          schema:
+            type: string
+            example: 41104403458
+        - name: survey_id
+          in: query
+          description: A UUID referring to a specific survey
+          schema:
+            type: string
+            format: uuid
+            example: 02b9c366-7397-42f7-942a-76dc5876d86d
+        - name: category
+          in: query
+          description: A string referring to what type a message is
+          schema:
+            type: string
+            enum:
+              - SURVEY
+              - TECHNICAL
+              - MISC
+            default: SURVEY
+        - name: assigned_internal_user_id
+          in: query
+          description: A UUID referring to a specific internal (ONS) user. Mutually exclusive with `user_id`
+          schema:
+            type: string
+            format: uuid
+            example: TODO
+        - name: user_id
+          in: query
+          description: A UUID referring to a specific external user. Mutually exclusive with `assigned_internal_user_id`
+          schema:
+            type: string
+            format: uuid
+            example: TODO
+        - name: page
+          in: query
+          description: The page of results. Used for pagination
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          description: The number of results to return. Can be used alone or in conjunction with `page` for pagination
+          schema:
+            type: integer
+            default: 10
+      responses:
+        200:
+          description: Successfully retrieved threads
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total_threads:
+                    type: integer
+                    example: 1
+                  threads:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Thread'
+        400:
+          description: Invalid query parameters
+    post:
+      tags:
+        - Threads
+        - Existing
+      summary: Post a new thread
+      description: Create a new thread
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                category:
+                  type: string
+                  example: SURVEY
+                subject:
+                  type: string
+                  example: Help with survey
+                case_id:
+                  type: string
+                  format: uuid
+                  example: fed17f21-e662-40cc-8c3e-7f8c16607d69
+                ru_ref:
+                  type: string
+                  example: 41104403458
+                survey_id:
+                  type: string
+                  format: uuid
+                  example: 85e75391-9b91-4322-8984-3d53da29186e
+                messages:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Message'
+      responses:
+        200:
+          description: Successfully created thread
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Thread'
+        400:
+          description: Payload is incorrect
+        405:
+          description: Method not allowed
+  /threads/{thread_id}:
+    get:
+      tags:
+        - Threads
+        - Existing
+      summary: Get a thread by a thread id
+      description: Get a specific thread by a `thread_id`
+      parameters:
+        - name: thread_id
+          in: path
+          description: UUID of the requested thread
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: d11f8fa2-83c7-4f28-b84e-710e74b939da
+      responses:
+        200:
+          description: Successfully retrieved thread
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Thread'
+        400:
+          description: Invalid thread id
+        404:
+          description: Thread not found
+    patch:
+      tags:
+        - Threads
+        - Existing
+      summary: Patch a thread by the thread id
+      description: Update a thread's metadata by the `thread_id`
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                category:
+                  type: string
+                  example: SURVEY
+                  subject:
+                    type: string
+                    example: Help with survey
+                  case_id:
+                    type: string
+                    format: uuid
+                    example: fed17f21-e662-40cc-8c3e-7f8c16607d69
+                  ru_ref:
+                    type: string
+                    example: 41104403458
+                  survey_id:
+                    type: string
+                    format: uuid
+                    example: 85e75391-9b91-4322-8984-3d53da29186e
+                  is_closed:
+                    type: boolean
+                    example: true
+                  closed_by:
+                    type: string
+                    format: uuid
+                    example: 6934f0c7-b595-435b-aa8f-291d6b6070d3
+              example:
+                is_closed: true
+                closed_by: 6934f0c7-b595-435b-aa8f-291d6b6070d3
+      parameters:
+        - name: thread_id
+          in: path
+          description: UUID of the thread to patch
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Thread'
+        '400':
+          description: Client error
+        '404':
+          description: Thread not found
+        '405':
+          description: Method not allowed
+    delete:
+      tags:
+        - Threads
+        - New
+      summary: Delete a thread by the thread_id
+      description: Delete a thread by the `thread_id`
+      parameters:
+        - name: thread_id
+          in: path
+          description: UUID of the thread to be deleted
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Successfully deleted
+        '404':
+          description: Thread not found
+        '405':
+          description: Method not allowed
+    put:
+      tags:
+        - Threads
+        - Existing
+      summary: Put a thread by the thread id
+      description: Update the thread's read status by the `thread_id`. This will only update the `is_read_by_respondent` **OR** `is_read_by_internal` depending on who is reading the message, the other should already be set to read since they have sent the message?
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                is_read_by_respondent:
+                  type: boolean
+                  example: true
+                is_read_by_internal:
+                  type: boolean
+                  example: true
+            example:
+              is_read_by_respondent: true
+              is_read_by_internal: true
+      parameters:
+        - name: thread_id
+          in: path
+          description: UUID of the thread to update
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: Successfully set the thread as [read|unread] for [internal user|respondent]
+        400:
+          description: Invalid thread id
+        404:
+          description: Thread not found
+        405:
+          description: Method not allowed
+  /threads/count:
+    get:
+      tags:
+        - Threads
+        - Existing
+      summary: Get count of threads for a user
+      description: Return count of threads for a user depending on a number of filters
+      parameters:
+        - name: user_id
+          in: query
+          description: User UUID assigned to the theads
+          schema:
+            type: string
+            format: uuid
+            example: 6934f0c7-b595-435b-aa8f-291d6b6070d3
+        - name: count_type
+          in: query
+          description: What kind of count to perform on the threads
+          schema:
+            type: string
+            enum:
+              - all
+              - unread
+              - survey
+            default: unread
+        - name: is_closed
+          in: query
+          description: True | False is the thread closed
+          schema:
+            type: bool
+            default: false
+        - name: survey
+          in: query
+          description: UUID of survey that the threads pertain to
+          schema:
+            type: string
+            format: uuid
+            example: 85e75391-9b91-4322-8984-3d53da29186e
+        - name: ru_ref
+          in: query
+          description: Business reference
+          schema:
+            type: string
+            example: 41104403458
+        - name: category
+          in: query
+          description: A string referring to what type a message is
+          schema:
+            type: string
+            enum:
+              - SURVEY
+              - TECHNICAL
+              - MISC
+            default: SURVEY
+        - name: case_id
+          in: query
+          description: UUID referring to the case
+          schema:
+            type: string
+            format: uuid
+            example: 6934f0c7-b595-435b-aa8f-291d6b6070d3
+        - name: assigned_internal_user_id
+          in: query
+          description: UUID referring to the assigned internal (ONS) user id
+          schema:
+            type: string
+            format: uuid
+            example: ca0f0819-8542-4410-bd38-edf67c59931f
+        - name: respondent_id
+          in: query
+          description: UUID referring to the id of the respondent linked to the message
+          schema:
+            type: string
+            format: uuid
+            example: ca0f0819-8542-4410-bd38-edf67c59931f
+      responses:
+        200:
+          description: Successfully returned unread thread count
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/basicCount'
+                  - $ref: '#/components/schemas/complexCount'
+                examples:
+                  basicCount:
+                    value:
+                      total: 3
+                  complexCount:
+                    value:
+                      totals:
+                        open: 0
+                        closed: 2
+                        my_conversations: 1
+                        initial_conversations: 3
+        400:
+          description: Invalid `user_id`
+  /info:
+    get:
+      summary: Get health status of the app
+      description: Get the health status of the app so we can check the liveness
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Health status of the service
+                    example: OK
+components:
+  schemas:
+    Thread:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 91e0bb4f-ffad-404c-af1b-01c87037119c
+        category:
+          type: string
+          example: SURVEY
+        subject:
+          type: string
+          example: Help with survey
+        is_closed:
+          type: boolean
+          example: false
+        closed_at:
+          type: string
+          format: datetime
+          example: null
+        closed_by:
+          type: string
+          format: uuid
+          example: 6934f0c7-b595-435b-aa8f-291d6b6070d3
+        case_id:
+          type: string
+          format: uuid
+          example: fed17f21-e662-40cc-8c3e-7f8c16607d69
+        ru_ref:
+          type: string
+          example: 41104403458
+        survey_id:
+          type: string
+          format: uuid
+          example: 85e75391-9b91-4322-8984-3d53da29186e
+        assigned_internal_user_id:
+          type: string
+          format: uuid
+          example: ca0f0819-8542-4410-bd38-edf67c59931f
+        is_read_by_respondent:
+          type: boolean
+          example: false
+        is_read_by_internal:
+          type: boolean
+          example: false
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+    Message:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: dc6ce00a-d6ee-469e-b751-5e540ff18877
+        thread_id:
+          type: string
+          format: uuid
+          example: 91e0bb4f-ffad-404c-af1b-01c87037119c
+        body:
+          type: string
+          example: I would like some help with this survey
+        sent_at:
+          type: string
+          format: datetime
+          example: 2022-08-21 14:00:00.873
+        read_at:
+          type: string
+          format: datetime
+          example: 2022-08-23 14:29:02.453
+        is_from_internal:
+          type: boolean
+          example: false
+        sent_by:
+          type: string
+          format: uuid
+          example: 6934f0c7-b595-435b-aa8f-291d6b6070d3
+    basicCount:
+      type: object
+      properties:
+        total:
+          type: int
+    complexCount:
+      type: object
+      properties:
+        totals:
+          type: array
+          items:
+            open: int
+            closed: int
+            my_conversations: int
+            initial_conversations: int
