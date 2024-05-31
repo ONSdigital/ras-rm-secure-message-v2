@@ -376,21 +376,17 @@ paths:
       parameters:
         - name: user_id
           in: query
-          description: User UUID assigned to the theads
+          description: User UUID assigned to the threads
           schema:
             type: string
             format: uuid
             example: 6934f0c7-b595-435b-aa8f-291d6b6070d3
-        - name: count_type
+        - name: unread
           in: query
-          description: What kind of count to perform on the threads
+          description: Whether to get a count of the unread threads
           schema:
-            type: string
-            enum:
-              - all
-              - unread
-              - survey
-            default: unread
+            type: bool
+            default: false
         - name: is_closed
           in: query
           description: True | False is the thread closed
@@ -427,40 +423,21 @@ paths:
             type: string
             format: uuid
             example: 6934f0c7-b595-435b-aa8f-291d6b6070d3
-        - name: assigned_internal_user_id
-          in: query
-          description: UUID referring to the assigned internal (ONS) user id
-          schema:
-            type: string
-            format: uuid
-            example: ca0f0819-8542-4410-bd38-edf67c59931f
-        - name: respondent_id
-          in: query
-          description: UUID referring to the id of the respondent linked to the message
-          schema:
-            type: string
-            format: uuid
-            example: ca0f0819-8542-4410-bd38-edf67c59931f
       responses:
         200:
           description: Successfully returned unread thread count
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/basicCount'
-                  - $ref: '#/components/schemas/complexCount'
-                examples:
-                  basicCount:
-                    value:
-                      total: 3
-                  complexCount:
-                    value:
-                      totals:
-                        open: 0
-                        closed: 2
-                        my_conversations: 1
-                        initial_conversations: 3
+                type: object
+                properties:
+                  totals:
+                    type: array
+                    example:
+                      open: 2
+                      closed: 0
+                      my_conversations: 1
+                      initial_conversations: 2
         400:
           description: Invalid `user_id`
   /info:
@@ -559,11 +536,6 @@ components:
           type: string
           format: uuid
           example: 6934f0c7-b595-435b-aa8f-291d6b6070d3
-    basicCount:
-      type: object
-      properties:
-        total:
-          type: int
     complexCount:
       type: object
       properties:
