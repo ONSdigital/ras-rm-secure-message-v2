@@ -366,13 +366,13 @@ paths:
           description: Thread not found
         405:
           description: Method not allowed
-  /threads/count:
+  /threads/counts:
     get:
       tags:
         - Threads
         - Existing
       summary: Get count of threads for a user
-      description: Return count of threads for a user depending on a number of filters
+      description: Return count of threads for a user depending on a number of filters. This endpoint will be used for response operations and returns a number of counts which can be seen below in the responses
       parameters:
         - name: user_id
           in: query
@@ -425,7 +425,7 @@ paths:
             example: 6934f0c7-b595-435b-aa8f-291d6b6070d3
       responses:
         200:
-          description: Successfully returned unread thread count
+          description: Successfully returned thread count
           content:
             application/json:
               schema:
@@ -438,6 +438,34 @@ paths:
                       closed: 0
                       my_conversations: 1
                       initial_conversations: 2
+        400:
+          description: Invalid `user_id`
+  /threads/count:
+    get:
+      tags:
+        - Threads
+        - Existing
+      summary: Get count of unread threads for a respondent
+      description: Return count of threads for a frontstage user. This is different from the above /threads/counts as this one only returns one count, specifically of unread messages linked to the user id, and is much more restricted as no parameters other than the `user_id` can be passed to filter. Only used for frontstage
+      parameters:
+        - name: user_id
+          in: query
+          description: User UUID assigned to the threads
+          schema:
+            type: string
+            format: uuid
+            example: 6934f0c7-b595-435b-aa8f-291d6b6070d3
+      responses:
+        200:
+          description: Successfully returned unread thread count
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total:
+                    type: string
+                    example: 1
         400:
           description: Invalid `user_id`
   /info:
