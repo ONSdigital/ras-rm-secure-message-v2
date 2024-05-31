@@ -536,13 +536,3 @@ components:
           type: string
           format: uuid
           example: 6934f0c7-b595-435b-aa8f-291d6b6070d3
-    complexCount:
-      type: object
-      properties:
-        totals:
-          type: array
-          items:
-            open: int
-            closed: int
-            my_conversations: int
-            initial_conversations: int
