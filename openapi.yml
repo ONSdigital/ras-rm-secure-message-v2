@@ -37,13 +37,6 @@ paths:
                 body:
                   type: string
                   example: I would like some help with this survey
-                is_from_internal:
-                  type: boolean
-                  example: true
-                sent_by:
-                  type: string
-                  format: uuid
-                  example: 6934f0c7-b595-435b-aa8f-291d6b6070d3
       responses:
         201:
           description: Message created
@@ -80,10 +73,6 @@ paths:
                 body:
                   type: string
                   example: I cannot access this survey
-                sent_by:
-                  type: string
-                  format: uuid
-                  example: 6934f0c7-b595-435b-aa8f-291d6b6070d3
       responses:
         200:
           description: Message patched
@@ -128,20 +117,6 @@ paths:
               - TECHNICAL
               - MISC
             default: SURVEY
-        - name: assigned_internal_user_id
-          in: query
-          description: A UUID referring to a specific internal (ONS) user. Mutually exclusive with `user_id`
-          schema:
-            type: string
-            format: uuid
-            example: TODO
-        - name: user_id
-          in: query
-          description: A UUID referring to a specific external user. Mutually exclusive with `assigned_internal_user_id`
-          schema:
-            type: string
-            format: uuid
-            example: TODO
         - name: page
           in: query
           description: The page of results. Used for pagination
@@ -154,6 +129,12 @@ paths:
           schema:
             type: integer
             default: 10
+        - name: counts
+          in: query
+          description: Flag instructing the service whether to return counts about the various inboxes rOps users have
+          schema:
+            type: bool
+            default: false
       responses:
         200:
           description: Successfully retrieved threads
@@ -169,6 +150,13 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Thread'
+                  counts:
+                    type: array
+                    example:
+                      open: 2
+                      closed: 0
+                      my_conversations: 1
+                      initial_conversations: 2
         400:
           description: Invalid query parameters
     post:
@@ -278,13 +266,8 @@ paths:
                   is_closed:
                     type: boolean
                     example: true
-                  closed_by:
-                    type: string
-                    format: uuid
-                    example: 6934f0c7-b595-435b-aa8f-291d6b6070d3
               example:
                 is_closed: true
-                closed_by: 6934f0c7-b595-435b-aa8f-291d6b6070d3
       parameters:
         - name: thread_id
           in: path
@@ -366,95 +349,20 @@ paths:
           description: Thread not found
         405:
           description: Method not allowed
-  /threads/counts:
-    get:
-      tags:
-        - Threads
-        - Existing
-      summary: Get count of threads for a user
-      description: Return count of threads for a user depending on a number of filters. This endpoint will be used for response operations and returns a number of counts which can be seen below in the responses
-      parameters:
-        - name: user_id
-          in: query
-          description: User UUID assigned to the threads
-          schema:
-            type: string
-            format: uuid
-            example: 6934f0c7-b595-435b-aa8f-291d6b6070d3
-        - name: unread
-          in: query
-          description: Whether to get a count of the unread threads
-          schema:
-            type: bool
-            default: false
-        - name: is_closed
-          in: query
-          description: True | False is the thread closed
-          schema:
-            type: bool
-            default: false
-        - name: survey
-          in: query
-          description: UUID of survey that the threads pertain to
-          schema:
-            type: string
-            format: uuid
-            example: 85e75391-9b91-4322-8984-3d53da29186e
-        - name: ru_ref
-          in: query
-          description: Business reference
-          schema:
-            type: string
-            example: 41104403458
-        - name: category
-          in: query
-          description: A string referring to what type a message is
-          schema:
-            type: string
-            enum:
-              - SURVEY
-              - TECHNICAL
-              - MISC
-            default: SURVEY
-        - name: case_id
-          in: query
-          description: UUID referring to the case
-          schema:
-            type: string
-            format: uuid
-            example: 6934f0c7-b595-435b-aa8f-291d6b6070d3
-      responses:
-        200:
-          description: Successfully returned thread count
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  totals:
-                    type: array
-                    example:
-                      open: 2
-                      closed: 0
-                      my_conversations: 1
-                      initial_conversations: 2
-        400:
-          description: Invalid `user_id`
   /threads/count:
     get:
       tags:
         - Threads
         - Existing
-      summary: Get count of unread threads for a respondent
+      summary: Get count of unread threads for a user
       description: Return count of threads for a frontstage user. This is different from the above /threads/counts as this one only returns one count, specifically of unread messages linked to the user id, and is much more restricted as no parameters other than the `user_id` can be passed to filter. Only used for frontstage
       parameters:
-        - name: user_id
+        - name: unread
           in: query
-          description: User UUID assigned to the threads
+          description: Flag informing the service to return a count of unread messages
           schema:
-            type: string
-            format: uuid
-            example: 6934f0c7-b595-435b-aa8f-291d6b6070d3
+            type: bool
+            example: true
       responses:
         200:
           description: Successfully returned unread thread count
@@ -463,7 +371,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  total:
+                  count:
                     type: string
                     example: 1
         400:
