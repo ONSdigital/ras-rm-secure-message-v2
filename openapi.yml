@@ -354,8 +354,8 @@ paths:
       tags:
         - Threads
         - Existing
-      summary: Get count of unread threads for a user
-      description: Return count of threads for a frontstage user. This is different from the above /threads/counts as this one only returns one count, specifically of unread messages linked to the user id, and is much more restricted as no parameters other than the `user_id` can be passed to filter. Only used for frontstage
+      summary: Get count of threads for a user
+      description: Returns the total count of threads for the user. Can be filtered for its primary use case to return a count of unread threads only.
       parameters:
         - name: unread
           in: query
