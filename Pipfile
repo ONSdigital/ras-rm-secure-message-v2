@@ -11,6 +11,11 @@ sqlalchemy = "*"
 retrying = "*"
 psycopg2-binary = "*"
 werkzeug = "*"
+pyjwt = "*"
+requests = "*"
+tenacity = "*"
+types-requests = "*"
+requests-mock = "*"
 
 [dev-packages]
 black = "*"
