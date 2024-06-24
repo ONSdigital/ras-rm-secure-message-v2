@@ -22,11 +22,11 @@ class UAAError(Exception):
         self.message = message
 
 
-def create_app(config=None):
+def create_app():
     app = Flask(__name__)
     app.name = "ras-rm-secure-message-v2"
     logger.info("Creating app", name=app.name)
-    app_config = f"config.{config or 'Config'}"
+    app_config = "config.Config"
     app.config.from_object(app_config)
 
     app.register_blueprint(info_bp, url_prefix="/info")
@@ -46,8 +46,8 @@ def create_app(config=None):
         if app.config["UAA_CHECK_ENABLED"]:
             try:
                 get_uaa_token(app)
-            except requests.RequestException as e:
-                raise UAAError(f"unable to obtain UAA token {e}")
+            except requests.RequestException:
+                raise UAAError("unable to obtain UAA token")
 
     return app
 

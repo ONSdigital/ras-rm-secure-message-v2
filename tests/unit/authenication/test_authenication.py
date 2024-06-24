@@ -18,7 +18,6 @@ def test_missing_role(app, request_context):
 
     with pytest.raises(JWTValidationError) as e:
         _mock_decorator()
-
     assert e.value.message == "JWT claims missing role"
 
 

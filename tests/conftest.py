@@ -25,7 +25,6 @@ def jwt_payload():
 @pytest.fixture(scope="session")
 def test_client(app, jwt_payload):
     authorization_token = encode(jwt_payload, "test-key", algorithm="HS256", headers={"alg": "HS256", "typ": "jwt"})
-    print(authorization_token)
     with app.test_client() as testing_client:
         testing_client.environ_base["HTTP_AUTHORIZATION"] = authorization_token
         yield testing_client

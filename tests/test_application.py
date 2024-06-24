@@ -2,6 +2,14 @@ import requests
 
 from secure_message_v2.application import get_uaa_token
 
+ACCESS_TOKEN = {
+    "access_token": "a37ab9dcd1aa4a89939713c6daa87e18",
+    "token_type": "bearer",
+    "expires_in": 43199,
+    "scope": "scim.userids scim.me scim.read",
+    "jti": "a37ab9dcd1aa4a89939713c6daa87e18",
+}
+
 
 def test_before_request_uaa_error(app, mocker):
     mocker.patch("secure_message_v2.application.get_uaa_token", side_effect=requests.RequestException())
@@ -12,6 +20,6 @@ def test_before_request_uaa_error(app, mocker):
 
 
 def test_get_uaa_token(app, requests_mock):
-    requests_mock.post(f"{app.config['UAA_URL']}/oauth/token", json={"name": "awesome-mock"})
+    requests_mock.post(f"{app.config['UAA_URL']}/oauth/token", json=ACCESS_TOKEN)
     uaa_token = get_uaa_token(app)
-    assert uaa_token == {"name": "awesome-mock"}
+    assert uaa_token == ACCESS_TOKEN
