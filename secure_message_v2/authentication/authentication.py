@@ -16,9 +16,9 @@ def jwt_authentication(f):
         if not (token := request.headers.get("Authorization")):
             raise JWTValidationError("Authorization header is missing")
 
-        jwt_key = current_app.config["JWT_KEY"]
+        jwt_secret = current_app.config["JWT_SECRET"]
         try:
-            claims = decode(token, jwt_key, algorithms="HS256")
+            claims = decode(token, jwt_secret, algorithms="HS256")
         except DecodeError:
             raise JWTValidationError("The JWT token could not be decoded")
 

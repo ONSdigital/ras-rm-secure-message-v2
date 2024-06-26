@@ -64,6 +64,14 @@ def test_post_thread(test_client, valid_thread_payload, thread, mocker):
     assert 201 == response.status_code
 
 
+def test_post_thread_unauthorized(app, valid_thread_payload, thread, mocker):
+    mocker.patch("secure_message_v2.views.threads.create_thread", return_value=thread)
+    response = app.test_client().post("/threads", json=valid_thread_payload, follow_redirects=True)
+
+    assert "Unauthorized".encode() in response.data
+    assert 401 == response.status_code
+
+
 def test_post_thread_bad_payload(test_client, invalid_thread_payload_missing_key):
     response = test_client.post("/threads", json=invalid_thread_payload_missing_key, follow_redirects=True)
 
@@ -79,5 +87,4 @@ def test_post_thread_statement_error(test_client, invalid_thread_payload_malform
     response = test_client.post("/threads", json=invalid_thread_payload_malformed, follow_redirects=True)
 
     assert 400 == response.status_code
-    print(response.data)
     assert PAYLOAD_MALFORMED.encode() in response.data

@@ -17,11 +17,6 @@ from secure_message_v2.views.threads import threads_bp
 logger = wrap_logger(logging.getLogger(__name__))
 
 
-class UAAError(Exception):
-    def __init__(self, message):
-        self.message = message
-
-
 def create_app():
     app = Flask(__name__)
     app.name = "ras-rm-secure-message-v2"
@@ -33,21 +28,12 @@ def create_app():
     app.register_blueprint(messages_bp, url_prefix="/messages")
     app.register_blueprint(threads_bp, url_prefix="/threads")
 
-    @app.errorhandler(UAAError)
     @app.errorhandler(JWTValidationError)
     def handle_exception(e):
         logger.error(e.message)
         response = jsonify({"error": "Unauthorized"})
         response.status_code = 401
         return response
-
-    @app.before_request
-    def before_request():
-        if app.config["UAA_CHECK_ENABLED"]:
-            try:
-                get_uaa_token(app)
-            except requests.RequestException:
-                raise UAAError("unable to obtain UAA token")
 
     return app
 

@@ -15,7 +15,7 @@ class Config:
 
     DATABASE_SCHEMA = os.getenv("DATABASE_SCHEMA", "securemessage")
     DATABASE_URI = os.getenv("DATABASE_URI", "postgresql://postgres:postgres@localhost:5432/postgres")
-    JWT_KEY = os.getenv("JWT_KEY", "test-key")
+    JWT_SECRET = os.getenv("JWT_SECRET", "test-key")
     UAA_URL = os.getenv("UAA_URL", "http://localhost:9080")
     UAA_CHECK_ENABLED = True
     CLIENT_ID = os.getenv("CLIENT_ID", "secure_message")
