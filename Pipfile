@@ -14,8 +14,6 @@ werkzeug = "*"
 pyjwt = "*"
 requests = "*"
 tenacity = "*"
-types-requests = "*"
-requests-mock = "*"
 
 [dev-packages]
 black = "*"
@@ -26,6 +24,8 @@ mock-alchemy = "*"
 pytest-mock = "*"
 mypy = "*"
 pytest-cov = "*"
+requests-mock = "*"
+types-requests = "*"
 
 [requires]
 python_version = "3.11"
