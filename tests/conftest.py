@@ -2,6 +2,7 @@ import uuid
 from datetime import datetime, timezone
 
 import pytest
+from jwt import encode
 
 from secure_message_v2.application import create_app
 from secure_message_v2.models import models
@@ -11,7 +12,22 @@ THREAD_ID = uuid.UUID("1f2324b9-b0ee-4fad-91c5-3539fd42fef7")
 
 @pytest.fixture(scope="session")
 def app():
-    return create_app()
+    app = create_app()
+    app.config["UAA_CHECK_ENABLED"] = False
+    return app
+
+
+@pytest.fixture(scope="session")
+def jwt_payload():
+    return {"party_id": "ce12b958-2a5f-44f4-a6da-861e59070a31", "role": "internal"}
+
+
+@pytest.fixture(scope="session")
+def test_client(app, jwt_payload):
+    authorization_token = encode(jwt_payload, "test-key", algorithm="HS256", headers={"alg": "HS256", "typ": "jwt"})
+    with app.test_client() as testing_client:
+        testing_client.environ_base["HTTP_AUTHORIZATION"] = authorization_token
+        yield testing_client
 
 
 @pytest.fixture()
@@ -98,3 +114,9 @@ def thread():
         category="category",
         survey_id=uuid.UUID("d6b47eb8-2a14-11ee-be56-0242ac120002"),
     )
+
+
+@pytest.fixture(scope="session")
+def request_context(app):
+    with app.test_request_context() as request_context:
+        yield request_context

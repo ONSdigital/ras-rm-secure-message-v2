@@ -11,6 +11,9 @@ sqlalchemy = "*"
 retrying = "*"
 psycopg2-binary = "*"
 werkzeug = "*"
+pyjwt = "*"
+requests = "*"
+tenacity = "*"
 
 [dev-packages]
 black = "*"
@@ -21,6 +24,8 @@ mock-alchemy = "*"
 pytest-mock = "*"
 mypy = "*"
 pytest-cov = "*"
+requests-mock = "*"
+types-requests = "*"
 
 [requires]
 python_version = "3.11"

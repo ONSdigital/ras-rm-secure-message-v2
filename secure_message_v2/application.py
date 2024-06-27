@@ -1,10 +1,14 @@
 import logging
 
-from flask import Flask
+import requests
+from flask import Flask, jsonify
+from requests.exceptions import ConnectionError, Timeout
 from sqlalchemy import DDL, create_engine, event
 from sqlalchemy.orm import scoped_session, sessionmaker
 from structlog import wrap_logger
+from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_fixed
 
+from secure_message_v2.authentication.authentication import JWTValidationError
 from secure_message_v2.models import models
 from secure_message_v2.views.info import info_bp
 from secure_message_v2.views.messages import messages_bp
@@ -24,6 +28,13 @@ def create_app():
     app.register_blueprint(messages_bp, url_prefix="/messages")
     app.register_blueprint(threads_bp, url_prefix="/threads")
 
+    @app.errorhandler(JWTValidationError)
+    def handle_exception(e):
+        logger.error(e.message)
+        response = jsonify({"error": "Unauthorized"})
+        response.status_code = 401
+        return response
+
     return app
 
 
@@ -31,7 +42,7 @@ def create_database(db_connection, db_schema):  # pragma: no cover
     engine = create_engine(db_connection)
 
     @event.listens_for(engine, "connect", insert=True)
-    def set_default_schema(dbapi_connection, connection_record):
+    def set_default_schema(dbapi_connection, _):
         existing_autocommit = dbapi_connection.autocommit
         dbapi_connection.autocommit = True
         cursor = dbapi_connection.cursor()
@@ -50,3 +61,20 @@ def create_database(db_connection, db_schema):  # pragma: no cover
     models.Base.metadata.create_all(engine)
 
     return engine
+
+
+@retry(
+    stop=stop_after_attempt(10),
+    wait=wait_fixed(10),
+    retry=retry_if_exception_type(ConnectionError) | retry_if_exception_type(Timeout),
+)
+def get_uaa_token(app):
+    headers = {"Content-Type": "application/x-www-form-urlencoded", "Accept": "application/json"}
+    payload = {"grant_type": "client_credentials", "response_type": "token", "token_format": "opaque"}
+    uaa_token = requests.post(
+        f"{app.config['UAA_URL']}/oauth/token",
+        headers=headers,
+        params=payload,
+        auth=(app.config["CLIENT_ID"], app.config["CLIENT_SECRET"]),
+    )
+    return uaa_token.json()

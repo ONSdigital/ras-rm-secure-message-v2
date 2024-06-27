@@ -13,7 +13,7 @@ database:
   secrets:
     usernameKey: username
     passwordKey: password
-    nameKey: securemessages
+    nameKey: db-name
 
 container:
   port: 8080

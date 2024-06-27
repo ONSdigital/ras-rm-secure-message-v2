@@ -5,6 +5,7 @@ from sqlalchemy.exc import NoResultFound, StatementError
 from structlog import wrap_logger
 from werkzeug.exceptions import BadRequest
 
+from secure_message_v2.authentication.authentication import jwt_authentication
 from secure_message_v2.controllers.messages import create_message
 from secure_message_v2.controllers.validate import Exists, Validator
 
@@ -17,6 +18,7 @@ PARENT_THREAD_NOT_FOUND = "The thread id in the payload does match a thread in t
 
 
 @messages_bp.route("/", methods=["POST"])
+@jwt_authentication
 def post_message() -> Response:
     payload = request.get_json()
     v = Validator(Exists("thread_id", "body", "is_from_internal", "sent_by"))

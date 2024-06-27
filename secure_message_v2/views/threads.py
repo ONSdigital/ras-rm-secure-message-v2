@@ -5,6 +5,7 @@ from sqlalchemy.exc import NoResultFound, StatementError
 from structlog import wrap_logger
 from werkzeug.exceptions import BadRequest, NotFound
 
+from secure_message_v2.authentication.authentication import jwt_authentication
 from secure_message_v2.controllers.threads import (
     FilterCriteriaNotImplemented,
     create_thread,
@@ -22,6 +23,7 @@ THREAD_NOT_FOUND = "The thread id does not match a thread in the database"
 
 
 @threads_bp.route("/<thread_id>/", methods=["GET"])
+@jwt_authentication
 def get_thread(thread_id: str) -> Response:
     try:
         thread = get_thread_by_id(thread_id)
@@ -32,6 +34,7 @@ def get_thread(thread_id: str) -> Response:
 
 
 @threads_bp.route("/", methods=["GET"])
+@jwt_authentication
 def get_threads_by_request_args() -> Response:
     try:
         threads = get_threads_by_args(request.args)
@@ -46,6 +49,7 @@ def get_threads_by_request_args() -> Response:
 
 
 @threads_bp.route("/", methods=["POST"])
+@jwt_authentication
 def post_thread() -> Response:
     payload = request.get_json()
     v = Validator(Exists("subject", "category"))
