@@ -29,4 +29,4 @@ if __name__ == "__main__":
         exit(1)
 
     scheme, host, port = app.config["SCHEME"], app.config["HOST"], int(app.config["PORT"])
-    app.run(debug=True, host=host, port=port)
+    app.run(debug=False, host=host, port=port)
