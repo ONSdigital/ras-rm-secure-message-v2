@@ -21,3 +21,5 @@ class Config:
     CLIENT_ID = os.getenv("CLIENT_ID", "secure_message")
     CLIENT_SECRET = os.getenv("CLIENT_SECRET", "nearest.location.roll.change")
     THREAD_DELETION_OFFSET_IN_DAYS = 365
+    SECURITY_USER_PASSWORD = os.getenv("SECURITY_USER_PASSWORD", "secret")
+    SECURITY_USER_NAME = os.getenv("SECURITY_USER_NAME", "admin")

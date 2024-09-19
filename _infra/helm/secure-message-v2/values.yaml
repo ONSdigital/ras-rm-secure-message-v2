@@ -56,4 +56,4 @@ crons:
   markThreadForDeletion:
     name: cron-mark-thread-for-deletion
     schedule: "0 1 * * *"
-    target: "/info"
+    target: "batch/mark_thread_for_deletion"
