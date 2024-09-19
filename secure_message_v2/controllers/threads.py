@@ -1,11 +1,14 @@
 import logging
+from datetime import datetime, timedelta, timezone
 
 import structlog
+from flask import current_app as app
 from sqlalchemy.orm import Session
 
 from secure_message_v2.controllers.queries import (
     query_thread_by_filter_criteria,
     query_thread_by_id,
+    query_threads_marked_for_deletion_by_closed_at_date,
 )
 from secure_message_v2.models.models import Thread
 from secure_message_v2.utils.session_decorator import with_db_session
@@ -90,3 +93,14 @@ def update_read_status(thread_id: str, internally_read: bool, externally_read: b
     thread = query_thread_by_id(thread_id, session)
     thread.is_read_by_internal = internally_read
     thread.is_read_by_respondent = externally_read
+
+
+@with_db_session
+def marked_for_deletion_by_closed_at_date(session: Session) -> None:
+    """
+    Updates all threads marked_for_deletion to True if closed_at_date is less than a configurable date
+    :param session
+    """
+    date_threshold = datetime.now(timezone.utc) - timedelta(days=app.config["THREAD_DELETION_OFFSET_IN_DAYS"])
+    threads_updated = query_threads_marked_for_deletion_by_closed_at_date(date_threshold, session)
+    logger.info(f"{threads_updated} Threads marked for deletion")

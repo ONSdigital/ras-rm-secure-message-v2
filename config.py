@@ -20,3 +20,4 @@ class Config:
     UAA_CHECK_ENABLED = True
     CLIENT_ID = os.getenv("CLIENT_ID", "secure_message")
     CLIENT_SECRET = os.getenv("CLIENT_SECRET", "nearest.location.roll.change")
+    THREAD_DELETION_OFFSET_IN_DAYS = 365

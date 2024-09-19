@@ -50,3 +50,10 @@ rollingUpdate:
 dns:
   enabled: false
   wellKnownPort: 8080
+
+
+crons:
+  markThreadForDeletion:
+    name: cron-mark-thread-for-deletion
+    schedule: "0 1 * * *"
+    target: "/info"

@@ -67,8 +67,8 @@ def valid_thread_payload():
         "subject": "subject",
         "category": "category",
         "is_closed": False,
-        "closed_by_id": uuid.UUID("0a4b6553-3235-4120-8fd0-9876d74dddd4"),
-        "closed_at": datetime(2023, 1, 1, 12, 0, 0, tzinfo=timezone.utc),
+        "closed_by_id": None,
+        "closed_at": None,
         "case_id": uuid.UUID("d0a75b94-2a14-11ee-be56-0242ac120002"),
         "ru_ref": "ru_ref",
         "survey_id": uuid.UUID("d6b47eb8-2a14-11ee-be56-0242ac120002"),
@@ -77,6 +77,31 @@ def valid_thread_payload():
         "is_read_by_respondent": False,
         "is_read_by_internal": False,
     }
+
+
+@pytest.fixture()
+def valid_closed_thread_payload():
+    return {
+        "subject": "subject",
+        "category": "category",
+        "is_closed": True,
+        "closed_by_id": uuid.UUID("0a4b6553-3235-4120-8fd0-9876d74dddd4"),
+        "closed_at": datetime.now(),
+        "case_id": uuid.UUID("d0a75b94-2a14-11ee-be56-0242ac120002"),
+        "ru_ref": "ru_ref",
+        "survey_id": uuid.UUID("d6b47eb8-2a14-11ee-be56-0242ac120002"),
+        "assigned_internal_user_id": uuid.UUID("dc06fa62-2a14-11ee-be56-0242ac120002"),
+        "respondent_id": uuid.UUID("eb5eb22a-2a14-11ee-be56-0242ac120002"),
+        "is_read_by_respondent": False,
+        "is_read_by_internal": False,
+    }
+
+
+@pytest.fixture()
+def valid_closed_thread_ready_for_deletion(valid_closed_thread_payload):
+    ready_for_deletion = valid_closed_thread_payload.copy()
+    ready_for_deletion["closed_at"] = datetime(2023, 1, 1, 12, 0, 0, tzinfo=timezone.utc)
+    return ready_for_deletion
 
 
 @pytest.fixture()

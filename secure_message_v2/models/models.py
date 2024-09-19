@@ -16,7 +16,7 @@ class Thread(Base):
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     subject: Mapped[str]
     category: Mapped[str]
-    is_closed: Mapped[Optional[bool]]
+    is_closed: Mapped[bool] = mapped_column(default=False)
     closed_by_id: Mapped[Optional[UUID]]
     closed_at: Mapped[Optional[datetime]]
     case_id: Mapped[Optional[UUID]]
@@ -24,8 +24,9 @@ class Thread(Base):
     survey_id: Mapped[Optional[UUID]]
     assigned_internal_user_id: Mapped[Optional[UUID]]
     respondent_id: Mapped[Optional[UUID]]
-    is_read_by_respondent: Mapped[bool]
-    is_read_by_internal: Mapped[bool]
+    is_read_by_respondent: Mapped[bool] = mapped_column(default=False)
+    is_read_by_internal: Mapped[bool] = mapped_column(default=False)
+    marked_for_deletion: Mapped[bool] = mapped_column(default=False)
 
     messages: Mapped[List["Message"]] = relationship("Message", back_populates="thread", cascade="all, delete-orphan")
 
@@ -44,6 +45,7 @@ class Thread(Base):
             "respondent_id": str(self.respondent_id),
             "is_read_by_respondent": self.is_read_by_respondent,
             "is_read_by_internal": self.is_read_by_internal,
+            "marked_for_deletion": self.marked_for_deletion,
         }
 
 
