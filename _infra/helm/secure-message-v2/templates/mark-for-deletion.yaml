@@ -27,5 +27,5 @@ spec:
             command:
             - /bin/sh
             - -c
-            - curl -u $(SECURITY_USER_NAME):$(SECURITY_USER_PASSWORD) -X PATCH http://$(SECURE_MESSAGE_V2_SERVICE_HOST):$(SECURE_MESSAGE_V2_SERVICE_PORT)/$(TARGET)
+            - curl -s -u $(SECURITY_USER_NAME):$(SECURITY_USER_PASSWORD) -X PATCH http://$(SECURE_MESSAGE_V2_SERVICE_HOST):$(SECURE_MESSAGE_V2_SERVICE_PORT)/$(TARGET)
           restartPolicy: OnFailure

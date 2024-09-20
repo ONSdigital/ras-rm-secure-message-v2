@@ -51,9 +51,8 @@ dns:
   enabled: false
   wellKnownPort: 8080
 
-
 crons:
   markThreadForDeletion:
-    name: cron-mark-thread-for-deletion
+    name: secure-message-v2-mark-thread-for-deletion-scheduled-job
     schedule: "0 1 * * *"
     target: "batch/mark_thread_for_deletion"
