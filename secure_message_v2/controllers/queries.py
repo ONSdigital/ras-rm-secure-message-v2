@@ -33,4 +33,9 @@ def query_threads_marked_for_deletion_by_closed_at_date(date_threshold: datetime
     :param session
     :return: a count of the threads updated
     """
-    return session.query(Thread).filter(Thread.closed_at < date_threshold).update({Thread.marked_for_deletion: True})
+    return (
+        session.query(Thread)
+        .filter(Thread.is_closed.is_(True))
+        .filter(Thread.closed_at < date_threshold)
+        .update({Thread.marked_for_deletion: True})
+    )

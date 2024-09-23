@@ -53,6 +53,6 @@ dns:
 
 crons:
   markThreadForDeletion:
-    name: secure-message-v2-mark-thread-for-deletion-scheduled-job
+    name: sm-v2-mark-thread-for-deletion-scheduled-job
     schedule: "0 1 * * *"
     target: "batch/mark_thread_for_deletion"
