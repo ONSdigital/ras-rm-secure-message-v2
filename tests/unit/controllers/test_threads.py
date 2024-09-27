@@ -8,6 +8,7 @@ from secure_message_v2.controllers.threads import (
     create_thread,
     get_thread_by_id,
     get_threads_by_args,
+    marked_for_deletion_by_closed_at_date,
     update_read_status,
 )
 from secure_message_v2.models.models import Thread
@@ -44,12 +45,12 @@ def test_get_threads_by_args_not_implemented(app_with_db_session, thread):
 def test_create_thread(app_with_db_session, valid_thread_payload):
     with app_with_db_session.app_context():
         thread = create_thread(valid_thread_payload)
-
         assert {
             "subject": "subject",
             "category": "category",
             "is_closed": False,
-            "closed_by_id": "0a4b6553-3235-4120-8fd0-9876d74dddd4",
+            "closed_by_id": "None",
+            "closed_at": None,
             "case_id": "d0a75b94-2a14-11ee-be56-0242ac120002",
             "ru_ref": "ru_ref",
             "survey_id": "d6b47eb8-2a14-11ee-be56-0242ac120002",
@@ -57,6 +58,7 @@ def test_create_thread(app_with_db_session, valid_thread_payload):
             "respondent_id": "eb5eb22a-2a14-11ee-be56-0242ac120002",
             "is_read_by_respondent": False,
             "is_read_by_internal": False,
+            "marked_for_deletion": False,
         }.items() <= thread.to_response_dict().items()
 
 
@@ -80,3 +82,19 @@ def test_update_read_status(is_read_by_internal, is_read_by_respondent, app_with
 
         assert thread.is_read_by_respondent is is_read_by_internal
         assert thread.is_read_by_internal is is_read_by_internal
+
+
+@pytest.mark.parametrize(
+    "thread_payload, expected_marked_for_deletion",
+    [
+        ("valid_thread_payload", False),
+        ("valid_closed_thread_payload", False),
+        ("valid_closed_thread_ready_for_deletion", True),
+    ],
+)
+def test_mark_for_deletion(app_with_db_session, thread_payload, expected_marked_for_deletion, request):
+    with app_with_db_session.app_context():
+        thread = create_thread(request.getfixturevalue(thread_payload))
+        marked_for_deletion_by_closed_at_date()
+
+        assert get_thread_by_id(thread.id).marked_for_deletion is expected_marked_for_deletion

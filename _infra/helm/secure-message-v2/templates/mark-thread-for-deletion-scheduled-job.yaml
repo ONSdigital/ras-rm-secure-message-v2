@@ -1,0 +1,31 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Values.crons.markThreadForDeletion.name }}
+spec:
+  schedule: {{ .Values.crons.markThreadForDeletion.schedule }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: {{ .Values.crons.markThreadForDeletion.name }}
+            image: radial/busyboxplus:curl
+            env:
+              - name: SECURITY_USER_NAME
+                valueFrom:
+                  secretKeyRef:
+                    name: security-credentials
+                    key: security-user
+              - name: SECURITY_USER_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: security-credentials
+                    key: security-password
+              - name: TARGET
+                value: {{ .Values.crons.markThreadForDeletion.target }}
+            command:
+            - /bin/sh
+            - -c
+            - curl -s -u $(SECURITY_USER_NAME):$(SECURITY_USER_PASSWORD) -X PATCH http://$(SECURE_MESSAGE_V2_SERVICE_HOST):$(SECURE_MESSAGE_V2_SERVICE_PORT)/$(TARGET)
+          restartPolicy: OnFailure

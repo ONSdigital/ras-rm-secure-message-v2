@@ -10,6 +10,7 @@ from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_fi
 
 from secure_message_v2.authentication.authentication import JWTValidationError
 from secure_message_v2.models import models
+from secure_message_v2.views.batch_requests import batch_request_bp
 from secure_message_v2.views.info import info_bp
 from secure_message_v2.views.messages import messages_bp
 from secure_message_v2.views.threads import threads_bp
@@ -27,6 +28,7 @@ def create_app():
     app.register_blueprint(info_bp, url_prefix="/info")
     app.register_blueprint(messages_bp, url_prefix="/messages")
     app.register_blueprint(threads_bp, url_prefix="/threads")
+    app.register_blueprint(batch_request_bp, url_prefix="/batch")
 
     @app.errorhandler(JWTValidationError)
     def handle_exception(e):
