@@ -157,5 +157,15 @@ spec:
               secretKeyRef:
                 name: jwt-secret
                 key: jwt-secret
+          - name: SECURITY_USER_NAME
+            valueFrom:
+              secretKeyRef:
+                name: security-credentials
+                key: security-user
+          - name: SECURITY_USER_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: security-credentials
+                key: security-password
           resources:
             {{ toYaml .Values.resources.application | nindent 12 }}
