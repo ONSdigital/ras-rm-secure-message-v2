@@ -39,3 +39,12 @@ def query_threads_marked_for_deletion_by_closed_at_date(date_threshold: datetime
         .filter(Thread.closed_at < date_threshold)
         .update({Thread.marked_for_deletion: True})
     )
+
+
+def query_delete_threads_marked_for_deletion(session: Session) -> int:
+    """
+    Deletes all threads marked_for_deletion
+    :param session
+    :return: a count of the threads updated
+    """
+    return session.query(Thread).where(Thread.marked_for_deletion.is_(True)).delete()
