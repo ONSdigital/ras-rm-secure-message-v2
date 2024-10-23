@@ -105,6 +105,13 @@ def valid_closed_thread_ready_for_deletion(valid_closed_thread_payload):
 
 
 @pytest.fixture()
+def valid_marked_for_deletion(valid_closed_thread_ready_for_deletion):
+    marked_for_deletion = valid_closed_thread_ready_for_deletion.copy()
+    marked_for_deletion["marked_for_deletion"] = True
+    return marked_for_deletion
+
+
+@pytest.fixture()
 def invalid_thread_payload_missing_key(valid_thread_payload):
     thread_missing_key = valid_thread_payload.copy()
     thread_missing_key.pop("category")

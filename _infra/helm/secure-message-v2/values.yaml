@@ -54,5 +54,9 @@ dns:
 crons:
   markThreadForDeletion:
     name: sm-v2-mark-thread-for-deletion-scheduled-job
-    schedule: "0 1 * * *"
+    schedule: "0 2 * * *"
     target: "batch/mark_thread_for_deletion"
+  deleteThreads:
+    name: sm-v2-delete-threads-scheduled-job
+    schedule: "0 1 * * *"
+    target: "batch/threads"

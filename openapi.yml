@@ -11,6 +11,8 @@ tags:
     description: Message endpoints
   - name: Threads
     description: Thread endpoints
+  - name: Batch
+    description: Batch endpoints
   - name: Existing
     description: Existing secure message functionality
   - name: New
@@ -392,6 +394,24 @@ paths:
                     type: string
                     description: Health status of the service
                     example: OK
+  /batch/mark_thread_for_deletion:
+    patch:
+      tags:
+        - Batch
+      summary: patch for thread marked_for_deletion
+      description: patches marked_for_deletion to True if closed_at_date is less than a configurable date
+      responses:
+        '204':
+          description: successful operation
+  /batch/threads:
+    delete:
+      tags:
+        - Batch
+      summary: deletes threads
+      description: deletes all threads that have their marked_for_deletion set to True
+      responses:
+        '204':
+          description: successful operation
 components:
   schemas:
     Thread:
