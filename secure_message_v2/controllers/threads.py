@@ -115,6 +115,6 @@ def set_thread_attributes(thread_id: str, payload: dict, session: Session) -> Th
             if key in UPDATABLE_ATTRIBUTES:
                 setattr(thread, key, value)
             else:
-                logger.error(f"Thread attribute {key} can not set")
+                logger.error(f"Thread attribute {key} can not be set")
                 raise AttributeError
     return thread
