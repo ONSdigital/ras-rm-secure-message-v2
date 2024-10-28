@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime
 
 import pytest
 from sqlalchemy.exc import NoResultFound, StatementError
@@ -9,6 +10,7 @@ from secure_message_v2.controllers.threads import (
     get_thread_by_id,
     get_threads_by_args,
     marked_for_deletion_by_closed_at_date,
+    set_thread_attributes,
     update_read_status,
 )
 from secure_message_v2.models.models import Thread
@@ -98,3 +100,22 @@ def test_mark_for_deletion(app_with_db_session, thread_payload, expected_marked_
         marked_for_deletion_by_closed_at_date()
 
         assert get_thread_by_id(thread.id).marked_for_deletion is expected_marked_for_deletion
+
+
+def test_set_thread_attributes(app_with_db_session, valid_thread_payload):
+    with app_with_db_session.app_context():
+        thread = create_thread(valid_thread_payload)
+        date_time = datetime(2024, 1, 1, 12, 0, 0)
+        updated_thread = set_thread_attributes(thread.id, {"is_closed": True, "closed_at": date_time})
+
+        assert updated_thread.is_closed is True
+        assert updated_thread.closed_at == date_time
+
+
+def test_set_thread_invalid_attribute(app_with_db_session, valid_thread_payload):
+    with app_with_db_session.app_context():
+        thread = create_thread(valid_thread_payload)
+        with pytest.raises(AttributeError):
+            set_thread_attributes(thread.id, {"is_closed": True, "survey_id": "41e7cad0-a449-4b07-9daa-5d1a63b5631a"})
+
+        assert get_thread_by_id(thread.id).is_closed is False

@@ -15,6 +15,8 @@ from secure_message_v2.utils.session_decorator import with_db_session
 
 logger = structlog.wrap_logger(logging.getLogger(__name__))
 
+UPDATABLE_ATTRIBUTES = ["is_closed", "closed_by_id", "closed_at"]
+
 
 class FilterCriteriaNotImplemented(Exception):
     def __init__(self, error_message: str) -> None:
@@ -104,3 +106,15 @@ def marked_for_deletion_by_closed_at_date(session: Session) -> None:
     date_threshold = datetime.now(timezone.utc) - timedelta(days=app.config["THREAD_DELETION_OFFSET_IN_DAYS"])
     threads_updated = query_threads_marked_for_deletion_by_closed_at_date(date_threshold, session)
     logger.info(f"{threads_updated} Threads marked for deletion")
+
+
+@with_db_session
+def set_thread_attributes(thread_id: str, payload: dict, session: Session) -> Thread:
+    if thread := query_thread_by_id(thread_id, session):
+        for key, value in payload.items():
+            if key in UPDATABLE_ATTRIBUTES:
+                setattr(thread, key, value)
+            else:
+                logger.error(f"Thread attribute {key} can not set")
+                raise AttributeError
+    return thread
