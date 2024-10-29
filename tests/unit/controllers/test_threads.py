@@ -1,5 +1,6 @@
 import uuid
 from datetime import datetime
+from contextlib import nullcontext as does_not_raise
 
 import pytest
 from sqlalchemy.exc import NoResultFound, StatementError
@@ -7,6 +8,7 @@ from sqlalchemy.exc import NoResultFound, StatementError
 from secure_message_v2.controllers.threads import (
     FilterCriteriaNotImplemented,
     create_thread,
+    delete_threads_marked_for_deletion,
     get_thread_by_id,
     get_threads_by_args,
     marked_for_deletion_by_closed_at_date,
@@ -119,3 +121,18 @@ def test_set_thread_invalid_attribute(app_with_db_session, valid_thread_payload)
             set_thread_attributes(thread.id, {"is_closed": True, "survey_id": "41e7cad0-a449-4b07-9daa-5d1a63b5631a"})
 
         assert get_thread_by_id(thread.id).is_closed is False
+
+
+@pytest.mark.parametrize(
+    "thread_payload, expected_exception",
+    [
+        ("valid_thread_payload", does_not_raise()),
+        ("valid_marked_for_deletion", pytest.raises(NoResultFound)),
+    ],
+)
+def test_delete_threads_marked_for_deletion(app_with_db_session, thread_payload, expected_exception, request):
+    with app_with_db_session.app_context():
+        thread = create_thread(request.getfixturevalue(thread_payload))
+        with expected_exception:
+            delete_threads_marked_for_deletion()
+            get_thread_by_id(thread.id)
