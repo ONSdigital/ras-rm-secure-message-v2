@@ -25,9 +25,9 @@ def verify_password(username: str, password: str) -> Optional[str]:
         return username
 
 
-@batch_request_bp.route("/mark_thread_for_deletion", methods=["PATCH"])
+@batch_request_bp.route("/mark_threads_for_deletion", methods=["PATCH"])
 @auth.login_required
-def mark_thread_for_deletion() -> tuple[str, int]:
+def mark_threads_for_deletion() -> tuple[str, int]:
     marked_for_deletion_by_closed_at_date()
     return "", 204
 
