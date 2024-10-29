@@ -120,7 +120,8 @@ def set_thread_attributes(thread_id: str, payload: dict, session: Session) -> Th
                 logger.error(f"Thread attribute {key} can not be set")
                 raise AttributeError
     return thread
-  
+
+
 @with_db_session
 def delete_threads_marked_for_deletion(session: Session) -> None:
     """
@@ -129,4 +130,3 @@ def delete_threads_marked_for_deletion(session: Session) -> None:
     """
     threads_updated = query_delete_threads_marked_for_deletion(session)
     logger.info(f"{threads_updated} Threads deleted")
-

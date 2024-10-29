@@ -1,6 +1,6 @@
 import uuid
-from datetime import datetime
 from contextlib import nullcontext as does_not_raise
+from datetime import datetime
 
 import pytest
 from sqlalchemy.exc import NoResultFound, StatementError
