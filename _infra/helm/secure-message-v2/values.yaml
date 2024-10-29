@@ -52,7 +52,7 @@ dns:
   wellKnownPort: 8080
 
 crons:
-  markThreadForDeletion:
+  markThreadsForDeletion:
     name: sm-v2-mark-threads-for-deletion-scheduled-job
     schedule: "0 2 * * *"
     target: "batch/mark_threads_for_deletion"
