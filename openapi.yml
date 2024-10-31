@@ -240,7 +240,7 @@ paths:
         - Threads
         - Existing
       summary: Patch a thread by the thread id
-      description: Update a thread's metadata by the `thread_id`
+      description: Update a thread's attributes by the `thread_id`
       requestBody:
         required: true
         content:
@@ -248,28 +248,12 @@ paths:
             schema:
               type: object
               properties:
-                category:
-                  type: string
-                  example: SURVEY
-                  subject:
-                    type: string
-                    example: Help with survey
-                  case_id:
-                    type: string
-                    format: uuid
-                    example: fed17f21-e662-40cc-8c3e-7f8c16607d69
-                  ru_ref:
-                    type: string
-                    example: 41104403458
-                  survey_id:
-                    type: string
-                    format: uuid
-                    example: 85e75391-9b91-4322-8984-3d53da29186e
-                  is_closed:
-                    type: boolean
-                    example: true
-              example:
-                is_closed: true
+                is_closed:
+                  type: boolean
+                closed_by_id:
+                  type: uuid
+                closed_at:
+                  type: date
       parameters:
         - name: thread_id
           in: path
@@ -285,12 +269,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Thread'
-        '400':
-          description: Client error
         '404':
           description: Thread not found
-        '405':
-          description: Method not allowed
+        '422':
+          description: Attribute not updateable
     delete:
       tags:
         - Threads

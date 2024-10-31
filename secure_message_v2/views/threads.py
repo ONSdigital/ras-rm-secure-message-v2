@@ -11,6 +11,7 @@ from secure_message_v2.controllers.threads import (
     create_thread,
     get_thread_by_id,
     get_threads_by_args,
+    set_thread_attributes,
 )
 from secure_message_v2.controllers.validate import Exists, Validator
 
@@ -64,3 +65,16 @@ def post_thread() -> Response:
         raise BadRequest(PAYLOAD_MALFORMED)
 
     return make_response(jsonify(thread.to_response_dict()), 201)
+
+
+@threads_bp.route("/<thread_id>", methods=["PATCH"])
+@jwt_authentication
+def patch_thread_by_id(thread_id: str) -> Response:
+    payload = request.get_json()
+    try:
+        thread = set_thread_attributes(thread_id, payload)
+        return make_response(jsonify(thread.to_response_dict()), 200)
+    except NoResultFound:
+        raise NotFound(THREAD_NOT_FOUND)
+    except AttributeError:
+        return make_response("", 422)
