@@ -9,6 +9,7 @@ from structlog import wrap_logger
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_fixed
 
 from secure_message_v2.authentication.authentication import JWTValidationError
+from secure_message_v2.logger_config import logger_initial_config
 from secure_message_v2.models import models
 from secure_message_v2.views.batch_requests import batch_request_bp
 from secure_message_v2.views.info import info_bp
@@ -21,10 +22,11 @@ logger = wrap_logger(logging.getLogger(__name__))
 def create_app():
     app = Flask(__name__)
     app.name = "ras-rm-secure-message-v2"
-    logger.info("Creating app", name=app.name)
     app_config = "config.Config"
     app.config.from_object(app_config)
+    logger_initial_config(log_level=app.config["LOGGING_LEVEL"])
 
+    logger.info("Creating app", name=app.name)
     app.register_blueprint(info_bp, url_prefix="/info")
     app.register_blueprint(messages_bp, url_prefix="/messages")
     app.register_blueprint(threads_bp, url_prefix="/threads")

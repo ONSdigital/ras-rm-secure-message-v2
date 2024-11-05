@@ -20,7 +20,7 @@ lint-check:
 	pipenv run flake8
 	pipenv run mypy secure_message_v2
 
-test: lint-check
+test:
 	pipenv run pytest --cov secure_message_v2 --cov-report term-missing --cov-report html --cov-fail-under=100
 
 build-docker:

@@ -23,3 +23,4 @@ class Config:
     THREAD_DELETION_OFFSET_IN_DAYS = 365
     SECURITY_USER_PASSWORD = os.getenv("SECURITY_USER_PASSWORD", "secret")
     SECURITY_USER_NAME = os.getenv("SECURITY_USER_NAME", "admin")
+    LOGGING_LEVEL = os.getenv("LOGGING_LEVEL", "INFO")
