@@ -17,7 +17,6 @@ tenacity = "*"
 flask-httpauth = "*"
 
 [dev-packages]
-black = "*"
 pytest = "*"
 flake8 = "*"
 mock-alchemy = "*"
@@ -28,6 +27,7 @@ requests-mock = "*"
 types-requests = "*"
 freezegun = "*"
 isort = "*"
+black = "*"
 
 [requires]
 python_version = "3.12"
