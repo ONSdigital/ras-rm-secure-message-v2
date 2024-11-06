@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 
 import structlog
 from sqlalchemy.orm import Session
@@ -25,7 +25,7 @@ def create_message(message_payload: dict, session: Session) -> Message:
         body=message_payload["body"],
         is_from_internal=message_payload["is_from_internal"],
         sent_by=message_payload["sent_by"],
-        sent_at=datetime.utcnow(),
+        sent_at=datetime.now(timezone.utc),
     )
     session.add(message)
     update_read_status(message_payload["thread_id"], message.is_from_internal, not message.is_from_internal, session)
