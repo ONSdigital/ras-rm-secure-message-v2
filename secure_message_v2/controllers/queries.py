@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import and_
+from sqlalchemy import and_, delete
 from sqlalchemy.orm import Session
 
 from secure_message_v2.models.models import Thread
@@ -41,10 +41,10 @@ def query_threads_marked_for_deletion_by_closed_at_date(date_threshold: datetime
     )
 
 
-def query_delete_threads_marked_for_deletion(session: Session) -> int:
+def query_delete_threads_marked_for_deletion(session: Session) -> None:
     """
     Deletes all threads marked_for_deletion
     :param session
     :return: a count of the threads updated
     """
-    return session.query(Thread).where(Thread.marked_for_deletion.is_(True)).delete()
+    session.execute(delete(Thread).where(Thread.marked_for_deletion.is_(True)))
