@@ -128,4 +128,5 @@ def delete_threads_marked_for_deletion(session: Session) -> None:
     Deletes all threads marked_for_deletion
     :param session
     """
-    query_delete_threads_marked_for_deletion(session)
+    threads_updated = query_delete_threads_marked_for_deletion(session)
+    logger.info(f"{threads_updated} Threads deleted")
