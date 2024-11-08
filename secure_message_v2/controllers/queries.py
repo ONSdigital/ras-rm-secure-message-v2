@@ -47,6 +47,10 @@ def query_delete_threads_marked_for_deletion(session: Session) -> int:
     :param session
     :return: a count of the threads updated
     """
+
+    # ORM cascade behaviour only works for individual instances, it does not apply to “bulk” deletes as per the docs,
+    # Therefore we manually have to delete the messages first
+
     thread_ids_to_delete = session.query(Thread.id).filter(Thread.marked_for_deletion.is_(True))
     session.query(Message).where(Message.thread_id.in_(thread_ids_to_delete)).delete()
 
