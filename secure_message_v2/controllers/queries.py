@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy import and_
 from sqlalchemy.orm import Session
 
-from secure_message_v2.models.models import Thread
+from secure_message_v2.models.models import Message, Thread
 
 
 def query_thread_by_id(thread_id: str, session: Session) -> Thread:
@@ -47,4 +47,11 @@ def query_delete_threads_marked_for_deletion(session: Session) -> int:
     :param session
     :return: a count of the threads updated
     """
-    return session.query(Thread).where(Thread.marked_for_deletion.is_(True)).delete()
+
+    # ORM cascade behaviour only works for individual instances, it does not apply to “bulk” deletes as per the docs,
+    # Therefore we manually have to delete the messages first
+
+    thread_ids_to_delete = session.query(Thread.id).filter(Thread.marked_for_deletion.is_(True))
+    session.query(Message).where(Message.thread_id.in_(thread_ids_to_delete)).delete()
+
+    return session.query(Thread).where(Thread.id.in_(thread_ids_to_delete)).delete()
