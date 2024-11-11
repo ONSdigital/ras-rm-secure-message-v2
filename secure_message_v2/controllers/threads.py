@@ -6,6 +6,7 @@ from flask import current_app as app
 from sqlalchemy.orm import Session
 
 from secure_message_v2.controllers.queries import (
+    query_delete_threads_marked_for_deletion,
     query_thread_by_filter_criteria,
     query_thread_by_id,
     query_threads_marked_for_deletion_by_closed_at_date,
@@ -14,6 +15,8 @@ from secure_message_v2.models.models import Thread
 from secure_message_v2.utils.session_decorator import with_db_session
 
 logger = structlog.wrap_logger(logging.getLogger(__name__))
+
+UPDATABLE_ATTRIBUTES = ["is_closed", "closed_by_id", "closed_at"]
 
 
 class FilterCriteriaNotImplemented(Exception):
@@ -74,6 +77,7 @@ def create_thread(thread_payload: dict, session: Session) -> Thread:
         respondent_id=thread_payload.get("respondent_id"),
         is_read_by_respondent=thread_payload.get("is_read_by_respondent", False),
         is_read_by_internal=thread_payload.get("is_read_by_internal", False),
+        marked_for_deletion=thread_payload.get("marked_for_deletion", False),
         # We default to unread for both of these, as posting the message after will set the flags properly
     )
 
@@ -104,3 +108,25 @@ def marked_for_deletion_by_closed_at_date(session: Session) -> None:
     date_threshold = datetime.now(timezone.utc) - timedelta(days=app.config["THREAD_DELETION_OFFSET_IN_DAYS"])
     threads_updated = query_threads_marked_for_deletion_by_closed_at_date(date_threshold, session)
     logger.info(f"{threads_updated} Threads marked for deletion")
+
+
+@with_db_session
+def set_thread_attributes(thread_id: str, payload: dict, session: Session) -> Thread:
+    if thread := query_thread_by_id(thread_id, session):
+        for key, value in payload.items():
+            if key in UPDATABLE_ATTRIBUTES:
+                setattr(thread, key, value)
+            else:
+                logger.error(f"Thread attribute {key} can not be set")
+                raise AttributeError
+    return thread
+
+
+@with_db_session
+def delete_threads_marked_for_deletion(session: Session) -> None:
+    """
+    Deletes all threads marked_for_deletion
+    :param session
+    """
+    threads_updated = query_delete_threads_marked_for_deletion(session)
+    logger.info(f"{threads_updated} Threads deleted")

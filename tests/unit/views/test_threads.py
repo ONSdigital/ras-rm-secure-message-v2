@@ -88,3 +88,29 @@ def test_post_thread_statement_error(test_client, invalid_thread_payload_malform
 
     assert 400 == response.status_code
     assert PAYLOAD_MALFORMED.encode() in response.data
+
+
+def test_patch_thread(test_client, thread, mocker):
+    mocker.patch("secure_message_v2.views.threads.set_thread_attributes", return_value=thread)
+    response = test_client.patch("/threads/3144aba6-baf0-4b72-8fa3-90badc431a82", json={"is_closed": True})
+
+    assert 200 == response.status_code
+    assert str(thread.id).encode() in response.data
+
+
+def test_patch_thread_attribute_no_result(test_client, mocker):
+    mocker.patch("secure_message_v2.views.threads.set_thread_attributes", side_effect=NoResultFound())
+
+    response = test_client.patch("/threads/aa6f09a3-1e38-4a06-b72b-4b4155197fdc", json={"is_closed": True})
+
+    assert 404 == response.status_code
+    assert THREAD_NOT_FOUND.encode() in response.data
+
+
+def test_patch_thread_attribute_error(test_client, mocker):
+    mocker.patch("secure_message_v2.views.threads.set_thread_attributes", side_effect=AttributeError)
+    response = test_client.patch(
+        "/threads/3144aba6-baf0-4b72-8fa3-90badc431a82", json={"survey_id": "eb501b0b-8396-4e89-95b8-f0025fa13dec"}
+    )
+
+    assert 422 == response.status_code
