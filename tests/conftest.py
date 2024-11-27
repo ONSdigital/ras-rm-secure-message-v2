@@ -8,6 +8,7 @@ from secure_message_v2.application import create_app
 from secure_message_v2.models import models
 
 THREAD_ID = uuid.UUID("1f2324b9-b0ee-4fad-91c5-3539fd42fef7")
+MESSAGE_ID = uuid.UUID("e1b99ab7-001d-44d9-b23b-207becb00eaa")
 
 
 @pytest.fixture(scope="session")
@@ -128,6 +129,7 @@ def invalid_thread_payload_malformed(valid_thread_payload):
 @pytest.fixture()
 def message():
     return models.Message(
+        id=MESSAGE_ID,
         thread_id=THREAD_ID,
         body="body",
         is_from_internal=True,
