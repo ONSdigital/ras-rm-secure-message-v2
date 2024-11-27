@@ -42,7 +42,7 @@ def post_message() -> Response:
     return make_response(jsonify(message.to_response_dict()), 201)
 
 
-@messages_bp.route("/<message_id>/", methods=["PATCH"])
+@messages_bp.route("/<message_id>", methods=["PATCH"])
 @jwt_authentication
 def patch_message_by_id(message_id: str) -> Response:
     payload = request.get_json()

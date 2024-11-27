@@ -6,8 +6,8 @@ from sqlalchemy.exc import NoResultFound, StatementError
 from secure_message_v2.controllers.messages import (
     create_message,
     set_message_attributes,
+    get_message_by_id,
 )
-from secure_message_v2.controllers.queries import query_message_by_id
 
 
 def test_create_message(app_with_db_session, valid_message_payload):
@@ -44,4 +44,4 @@ def test_set_thread_invalid_attribute(app_with_db_session, valid_message_payload
         with pytest.raises(AttributeError):
             set_message_attributes(message.id, {"is_from_internal": False})
 
-        assert query_message_by_id(message.id).is_from_internal is True
+        assert get_message_by_id(message.id).is_from_internal is True

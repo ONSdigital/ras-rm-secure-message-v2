@@ -46,3 +46,14 @@ def set_message_attributes(message_id: str, payload: dict, session: Session) -> 
                 logger.error(f"Message attribute {key} can not be set")
                 raise AttributeError
     return message
+
+
+@with_db_session
+def get_message_by_id(message_id: str, session: Session) -> Message:
+    """
+    gets the message using message_id
+    :param message_id: the id of the message searching for
+    :param session
+    :return: the message object
+    """
+    return query_message_by_id(message_id, session)
