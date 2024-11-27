@@ -5,8 +5,8 @@ from sqlalchemy.exc import NoResultFound, StatementError
 
 from secure_message_v2.controllers.messages import (
     create_message,
-    set_message_attributes,
     get_message_by_id,
+    set_message_attributes,
 )
 
 
