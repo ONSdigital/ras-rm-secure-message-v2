@@ -16,7 +16,7 @@ def query_thread_by_id(thread_id: str, session: Session) -> Thread:
     return session.query(Thread).filter_by(id=thread_id).one()
 
 
-def query_message_by_id(message_id: str, session: Session) -> Thread:
+def query_message_by_id(message_id: str, session: Session) -> Message:
     """
     queries the Message table filtering on message_id
     :param message_id: the id of the message searching for
