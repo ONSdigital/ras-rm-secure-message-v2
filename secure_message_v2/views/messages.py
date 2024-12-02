@@ -18,7 +18,7 @@ messages_bp = Blueprint("messages_bp", __name__)
 
 PAYLOAD_MALFORMED = "The message payload is malformed"
 PARENT_THREAD_NOT_FOUND = "The thread id in the payload does match a thread in the database"
-MESSAGE_NOT_FOUND = "The message id does not match a thread in the database"
+MESSAGE_NOT_FOUND = "The message id does not match a message in the database"
 
 
 @messages_bp.route("/", methods=["POST"])
