@@ -63,6 +63,7 @@ def create_thread(thread_payload: dict, session: Session) -> Thread:
     :param session
     :return: the created thread object
     """
+    logger.info(f"thread_payload {thread_payload}")
 
     thread = Thread(
         subject=thread_payload["subject"],

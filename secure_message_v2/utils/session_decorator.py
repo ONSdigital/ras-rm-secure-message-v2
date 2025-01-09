@@ -15,7 +15,7 @@ def handle_session(f, args, kwargs):
         session.commit()
         return result
     except SQLAlchemyError:
-        logger.error("The session could not be committed")
+        logger.error("The session could not be committed", exc_info=True)
         session.rollback()
         raise
     finally:
