@@ -14,7 +14,7 @@ class Config:
     PORT = os.getenv("PORT", 5051)
 
     DATABASE_SCHEMA = os.getenv("DATABASE_SCHEMA", "securemessage")
-    DATABASE_URI = os.getenv("DATABASE_URI", "postgresql://postgres:postgres@localhost:5432/postgres")
+    DATABASE_URI = os.getenv("DATABASE_URI", "postgresql://postgres:postgres@localhost:5432/ras")
     JWT_SECRET = os.getenv("JWT_SECRET", "test-key")
     UAA_URL = os.getenv("UAA_URL", "http://localhost:9080")
     UAA_CHECK_ENABLED = True
