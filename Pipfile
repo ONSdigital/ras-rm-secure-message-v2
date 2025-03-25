@@ -4,17 +4,17 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-flask = "*"
 structlog = "*"
 gunicorn = "*"
 sqlalchemy = "*"
 retrying = "*"
 psycopg2-binary = "*"
 werkzeug = "*"
-pyjwt = "*"
 requests = "*"
 tenacity = "*"
 flask-httpauth = "*"
+flask = "*"
+pyjwt = "*"
 
 [dev-packages]
 black = "*"
