@@ -89,7 +89,7 @@ jobs:
         run: |
           helm template $CHART_DIRECTORY
       - name: Set current tag
-        if: github.ref != 'refs/heads/main' && github.actor != 'anwilkie'
+        if: github.ref != 'refs/heads/main'
         id: vars
         run: |
           git fetch --tags
