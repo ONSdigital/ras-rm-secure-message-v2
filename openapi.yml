@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Secure message v2
-  description: An updated service for sending and recieving secure messages
+  description: An updated service for sending and receiving secure messages
   version: 1.0.0
 servers:
   - url: https://localhost:5051
