@@ -51,6 +51,12 @@ dns:
   enabled: false
   wellKnownPort: 8080
 
+serviceAccount:
+  name: ras-rm-k8s-services
+
+imagePullSecrets:
+  - name: gar-secret
+
 crons:
   markThreadsForDeletion:
     name: sm-v2-mark-threads-for-deletion-scheduled-job
